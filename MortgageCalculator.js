@@ -7,47 +7,91 @@ class MortgageCalculator {
 
     renderForm() {
         this.container.innerHTML = `
-            <div id="mortgage-calculator" class="calculator active">
-                <h2>Mortgage Calculator</h2>
-                <div class="input-group">
-                    <label for="mortgage-amount">Loan Amount ($)</label>
-                    <input type="number" id="mortgage-amount" placeholder="300,000">
+            <div class="calculator-form">
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="mortgage-amount">Loan Amount ($)</label>
+                        <input type="number" id="mortgage-amount" placeholder="300,000" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="down-payment">Down Payment ($)</label>
+                        <input type="number" id="down-payment" placeholder="60,000" min="0">
+                    </div>
                 </div>
-                <div class="input-group">
-                    <label for="interest-rate">Interest Rate (%)</label>
-                    <input type="number" id="interest-rate" placeholder="3.5" step="0.01">
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="interest-rate">Interest Rate (%)</label>
+                        <input type="number" id="interest-rate" placeholder="3.5" step="0.01" min="0" max="20">
+                    </div>
+                    <div class="input-group">
+                        <label for="loan-term">Loan Term (years)</label>
+                        <select id="loan-term">
+                            <option value="10">10 years</option>
+                            <option value="15">15 years</option>
+                            <option value="20">20 years</option>
+                            <option value="30" selected>30 years</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="input-group">
-                    <label for="loan-term">Loan Term (years)</label>
-                    <input type="number" id="loan-term" placeholder="30">
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="property-tax">Annual Property Tax ($)</label>
+                        <input type="number" id="property-tax" placeholder="3,600" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="insurance">Annual Home Insurance ($)</label>
+                        <input type="number" id="insurance" placeholder="1,200" min="0">
+                    </div>
                 </div>
-                <div class="input-group">
-                    <label for="property-tax">Annual Property Tax ($)</label>
-                    <input type="number" id="property-tax" placeholder="3,600">
+                
+                <div class="input-row">
+                    <div class="input-group">
+                        <label for="pmi-rate">PMI Rate (%)</label>
+                        <input type="number" id="pmi-rate" placeholder="0.5" step="0.01" min="0" max="2">
+                    </div>
+                    <div class="input-group">
+                        <label for="start-date">Start Date</label>
+                        <input type="month" id="start-date">
+                    </div>
                 </div>
-                <div class="input-group">
-                    <label for="insurance">Annual Home Insurance ($)</label>
-                    <input type="number" id="insurance" placeholder="1,200">
+                
+                <button id="calculate-mortgage" class="calculate-btn">Calculate Mortgage</button>
+            </div>
+            
+            <div id="mortgage-results" class="results-container" style="display: none;">
+                <h3 class="results-title">Mortgage Results</h3>
+                <div id="mortgage-summary" class="summary-grid"></div>
+                
+                <div class="results-section">
+                    <h4>Amortization Schedule</h4>
+                    <div class="table-container">
+                        <table id="amortization-table">
+                            <thead>
+                                <tr>
+                                    <th>Month</th>
+                                    <th>Payment</th>
+                                    <th>Principal</th>
+                                    <th>Interest</th>
+                                    <th>Taxes/Ins</th>
+                                    <th>Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
-                <button id="calculate-mortgage">Calculate</button>
-                <div id="mortgage-results" class="results" style="display: none;">
-                    <h3>Mortgage Results</h3>
-                    <div id="mortgage-summary"></div>
-                    <table id="amortization-table">
-                        <thead>
-                            <tr>
-                                <th>Month</th>
-                                <th>Payment</th>
-                                <th>Principal</th>
-                                <th>Interest</th>
-                                <th>Balance</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                
+                <div class="chart-container">
+                    <canvas id="amortization-chart"></canvas>
                 </div>
             </div>
         `;
+        
+        // Set default start date to current month
+        const today = new Date();
+        document.getElementById('start-date').value = `${today.getFullYear()}-${(today.getMonth()+1).toString().padStart(2, '0')}`;
     }
 
     setupEventListeners() {
@@ -55,49 +99,166 @@ class MortgageCalculator {
     }
 
     calculate() {
-        const amount = parseFloat(document.getElementById('mortgage-amount').value) || 300000;
-        const rate = parseFloat(document.getElementById('interest-rate').value) || 3.5;
-        const term = parseInt(document.getElementById('loan-term').value) || 30;
-        const tax = parseFloat(document.getElementById('property-tax').value) || 3600;
-        const insurance = parseFloat(document.getElementById('insurance').value) || 1200;
+        // Get input values
+        const loanAmount = parseFloat(document.getElementById('mortgage-amount').value) || 0;
+        const downPayment = parseFloat(document.getElementById('down-payment').value) || 0;
+        const interestRate = parseFloat(document.getElementById('interest-rate').value) || 0;
+        const loanTerm = parseInt(document.getElementById('loan-term').value) || 30;
+        const propertyTax = parseFloat(document.getElementById('property-tax').value) || 0;
+        const insurance = parseFloat(document.getElementById('insurance').value) || 0;
+        const pmiRate = parseFloat(document.getElementById('pmi-rate').value) || 0;
+        const startDate = new Date(document.getElementById('start-date').value);
         
-        const monthlyRate = rate / 100 / 12;
-        const payments = term * 12;
-        const monthlyPayment = amount * monthlyRate * 
+        // Calculate loan details
+        const principal = loanAmount - downPayment;
+        const monthlyRate = interestRate / 100 / 12;
+        const payments = loanTerm * 12;
+        
+        // Calculate monthly payment
+        const monthlyPayment = principal * monthlyRate * 
             Math.pow(1 + monthlyRate, payments) / 
             (Math.pow(1 + monthlyRate, payments) - 1);
-        const totalPayment = monthlyPayment + (tax / 12) + (insurance / 12);
-        const totalInterest = (monthlyPayment * payments) - amount;
         
-        document.getElementById('mortgage-summary').innerHTML = `
-            <p><strong>Monthly Payment:</strong> $${totalPayment.toFixed(2)}</p>
-            <p><strong>Principal & Interest:</strong> $${monthlyPayment.toFixed(2)}</p>
-            <p><strong>Taxes & Insurance:</strong> $${((tax + insurance)/12).toFixed(2)}</p>
-            <p><strong>Total Interest:</strong> $${totalInterest.toFixed(2)}</p>
-            <p><strong>Total Cost:</strong> $${(amount + totalInterest + tax * term + insurance * term).toFixed(2)}</p>
-        `;
+        // Calculate PMI (if applicable)
+        const pmi = (principal > loanAmount * 0.8) ? (principal * pmiRate / 100 / 12) : 0;
         
-        let balance = amount;
+        // Calculate escrow
+        const escrow = (propertyTax + insurance) / 12;
+        const totalMonthly = monthlyPayment + pmi + escrow;
+        
+        // Generate amortization schedule
+        let balance = principal;
+        let totalInterest = 0;
         let amortizationHTML = '';
-        for (let i = 1; i <= payments; i++) {
+        const monthlyData = [];
+        const labels = [];
+        const principalData = [];
+        const interestData = [];
+        
+        for (let month = 1; month <= payments; month++) {
             const interest = balance * monthlyRate;
-            const principal = monthlyPayment - interest;
-            balance -= principal;
+            const principalPayment = monthlyPayment - interest;
+            balance -= principalPayment;
+            totalInterest += interest;
             
-            if (i <= 5 || i % 12 === 0 || i === payments) {
+            // Add to chart data (every 12 months)
+            if (month % 12 === 0 || month === 1 || month === payments) {
+                const date = new Date(startDate);
+                date.setMonth(date.getMonth() + month);
+                labels.push(date.toLocaleDateString('default', {month: 'short', year: 'numeric'}));
+                principalData.push(principalPayment);
+                interestData.push(interest);
+            }
+            
+            // Add to table (first 5 months, last 5 months, and yearly)
+            if (month <= 5 || month >= payments - 5 || month % 12 === 0) {
+                const date = new Date(startDate);
+                date.setMonth(date.getMonth() + month);
+                
                 amortizationHTML += `
                     <tr>
-                        <td>${i}</td>
-                        <td>$${monthlyPayment.toFixed(2)}</td>
-                        <td>$${principal.toFixed(2)}</td>
+                        <td>${date.toLocaleDateString('default', {month: 'short', year: 'numeric'})}</td>
+                        <td>$${totalMonthly.toFixed(2)}</td>
+                        <td>$${principalPayment.toFixed(2)}</td>
                         <td>$${interest.toFixed(2)}</td>
+                        <td>$${escrow.toFixed(2)}</td>
                         <td>$${Math.max(0, balance).toFixed(2)}</td>
                     </tr>
                 `;
             }
+            
+            if (balance <= 0) break;
         }
         
+        // Display results
+        document.getElementById('mortgage-summary').innerHTML = `
+            <div class="summary-card">
+                <h4>Monthly Payment</h4>
+                <p class="summary-value">$${totalMonthly.toFixed(2)}</p>
+                <div class="breakdown">
+                    <span>Principal & Interest: $${monthlyPayment.toFixed(2)}</span>
+                    <span>Taxes & Insurance: $${escrow.toFixed(2)}</span>
+                    ${pmi > 0 ? `<span>PMI: $${pmi.toFixed(2)}</span>` : ''}
+                </div>
+            </div>
+            <div class="summary-card">
+                <h4>Total Interest</h4>
+                <p class="summary-value">$${totalInterest.toFixed(2)}</p>
+            </div>
+            <div class="summary-card">
+                <h4>Total Cost</h4>
+                <p class="summary-value">$${(principal + totalInterest + (propertyTax * loanTerm) + (insurance * loanTerm)).toFixed(2)}</p>
+            </div>
+            <div class="summary-card">
+                <h4>Payoff Date</h4>
+                <p class="summary-value">${new Date(startDate.setMonth(startDate.getMonth() + payments)).toLocaleDateString('default', {month: 'long', year: 'numeric'})}</p>
+            </div>
+        `;
+        
         document.querySelector('#amortization-table tbody').innerHTML = amortizationHTML;
+        
+        // Create chart
+        this.createAmortizationChart(labels, principalData, interestData);
+        
+        // Show results
         document.getElementById('mortgage-results').style.display = 'block';
+    }
+
+    createAmortizationChart(labels, principalData, interestData) {
+        const ctx = document.getElementById('amortization-chart').getContext('2d');
+        
+        // Destroy previous chart if it exists
+        if (this.amortizationChart) {
+            this.amortizationChart.destroy();
+        }
+        
+        this.amortizationChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Principal',
+                        data: principalData,
+                        backgroundColor: '#4361ee',
+                        borderColor: '#3a56d4',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Interest',
+                        data: interestData,
+                        backgroundColor: '#f72585',
+                        borderColor: '#d3166a',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        stacked: true,
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': $' + context.raw.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 }
