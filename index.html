@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Finance Calculators</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h1>Professional Finance Calculators</h1>
+    
+    <div class="calculator-selector">
+        <select id="calculator-select">
+            <option value="">Select a Calculator</option>
+            <option value="mortgage">Mortgage Calculator</option>
+            <option value="investment">Investment Calculator</option>
+            <option value="debt">Debt Payoff Calculator</option>
+            <option value="retirement">Retirement Planner</option>
+            <option value="budget">Budget Analyzer</option>
+        </select>
+    </div>
+    
+    <div class="calculator-container">
+        <!-- Calculators will be loaded here dynamically -->
+    </div>
+
+    <!-- Load all calculator classes first -->
+    <script src="js/MortgageCalculator.js"></script>
+    <script src="js/InvestmentCalculator.js"></script>
+    <script src="js/DebtCalculator.js"></script>
+    <script src="js/RetirementCalculator.js"></script>
+    <script src="js/BudgetCalculator.js"></script>
+    
+    <!-- Then load main application logic -->
+    <script src="js/main.js"></script>
+</body>
+</html>
