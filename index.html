@@ -3,35 +3,291 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Finance Calculators</title>
+    <title>FinancePro | Professional Financial Calculators</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Poppins:wght@400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <h1>Professional Finance Calculators</h1>
-    
-    <div class="calculator-selector">
-        <select id="calculator-select">
-            <option value="">Select a Calculator</option>
-            <option value="mortgage">Mortgage Calculator</option>
-            <option value="investment">Investment Calculator</option>
-            <option value="debt">Debt Payoff Calculator</option>
-            <option value="retirement">Retirement Planner</option>
-            <option value="budget">Budget Analyzer</option>
-        </select>
-    </div>
-    
-    <div class="calculator-container">
-        <!-- Calculators will be loaded here dynamically -->
+    <header class="main-header">
+        <div class="container">
+            <div class="logo">
+                <i class="fas fa-calculator"></i>
+                <span>Finance<span class="logo-highlight">Pro</span></span>
+            </div>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="#" class="active">Home</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#calculators">Calculators</a></li>
+                    <li><a href="#testimonials">Testimonials</a></li>
+                </ul>
+            </nav>
+            <button class="mobile-menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Smart Financial Planning Made Simple</h1>
+                <p class="subtitle">Professional-grade financial calculators to help you make informed decisions about mortgages, investments, debt, retirement, and budgeting.</p>
+                <a href="#calculators" class="cta-button">Try Our Calculators <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="hero-image">
+                <img src="images/finance-dashboard.svg" alt="Financial dashboard illustration">
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features-section">
+        <div class="container">
+            <h2 class="section-title">Why Choose FinancePro?</h2>
+            <p class="section-subtitle">Our tools are designed by financial experts to give you accurate, actionable results.</p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Bank-Level Security</h3>
+                    <p>All calculations are performed in your browser. Your data never leaves your device.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Professional Accuracy</h3>
+                    <p>Industry-standard formulas ensure you get reliable, accurate results every time.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobile Friendly</h3>
+                    <p>Works perfectly on all devices from desktop to smartphone.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-export"></i>
+                    </div>
+                    <h3>Export Results</h3>
+                    <p>Download your calculations as PDF or CSV for future reference.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="calculators" class="calculators-section">
+        <div class="container">
+            <h2 class="section-title">Our Financial Calculators</h2>
+            <p class="section-subtitle">Select a calculator to begin your financial planning</p>
+            
+            <div class="calculator-cards">
+                <div class="calculator-card" data-calculator="mortgage">
+                    <div class="card-icon">
+                        <i class="fas fa-home"></i>
+                    </div>
+                    <h3>Mortgage Calculator</h3>
+                    <p>Calculate payments, amortization schedules, and compare loan options.</p>
+                    <button class="card-button">Use Calculator</button>
+                </div>
+                
+                <div class="calculator-card" data-calculator="investment">
+                    <div class="card-icon">
+                        <i class="fas fa-piggy-bank"></i>
+                    </div>
+                    <h3>Investment Calculator</h3>
+                    <p>Project future values, analyze returns, and plan your investment strategy.</p>
+                    <button class="card-button">Use Calculator</button>
+                </div>
+                
+                <div class="calculator-card" data-calculator="debt">
+                    <div class="card-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <h3>Debt Payoff Calculator</h3>
+                    <p>Create optimized payoff plans using snowball or avalanche methods.</p>
+                    <button class="card-button">Use Calculator</button>
+                </div>
+                
+                <div class="calculator-card" data-calculator="retirement">
+                    <div class="card-icon">
+                        <i class="fas fa-umbrella-beach"></i>
+                    </div>
+                    <h3>Retirement Planner</h3>
+                    <p>Simulate your retirement savings and withdrawal strategies.</p>
+                    <button class="card-button">Use Calculator</button>
+                </div>
+                
+                <div class="calculator-card" data-calculator="budget">
+                    <div class="card-icon">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <h3>Budget Analyzer</h3>
+                    <p>Analyze spending patterns and get personalized recommendations.</p>
+                    <button class="card-button">Use Calculator</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="testimonials" class="testimonials-section">
+        <div class="container">
+            <h2 class="section-title">What Our Users Say</h2>
+            <p class="section-subtitle">Trusted by individuals and financial professionals</p>
+            
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p>"The mortgage calculator helped me understand exactly how much house I could afford. The amortization schedule was incredibly detailed."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <img src="images/user1.jpg" alt="Sarah J." class="author-avatar">
+                        <div class="author-info">
+                            <h4>Sarah J.</h4>
+                            <span>First-time Homebuyer</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <p>"As a financial advisor, I recommend these calculators to all my clients. The retirement planner is particularly comprehensive."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <img src="images/user2.jpg" alt="Michael T." class="author-avatar">
+                        <div class="author-info">
+                            <h4>Michael T.</h4>
+                            <span>Certified Financial Planner</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <p>"The debt payoff calculator showed me how to save $3,200 in interest by adjusting my payment strategy. Game changer!"</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <img src="images/user3.jpg" alt="David R." class="author-avatar">
+                        <div class="author-info">
+                            <h4>David R.</h4>
+                            <span>Small Business Owner</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Take Control of Your Finances?</h2>
+                <p>Start using our professional financial calculators today - no registration required!</p>
+                <a href="#calculators" class="cta-button">Get Started Now <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="logo">
+                        <i class="fas fa-calculator"></i>
+                        <span>Finance<span class="logo-highlight">Pro</span></span>
+                    </div>
+                    <p>Professional financial tools for informed decision making.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-col">
+                    <h4>Calculators</h4>
+                    <ul>
+                        <li><a href="#" data-calculator="mortgage">Mortgage Calculator</a></li>
+                        <li><a href="#" data-calculator="investment">Investment Calculator</a></li>
+                        <li><a href="#" data-calculator="debt">Debt Payoff Calculator</a></li>
+                        <li><a href="#" data-calculator="retirement">Retirement Planner</a></li>
+                        <li><a href="#" data-calculator="budget">Budget Analyzer</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Financial Glossary</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Tutorials</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-col">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2023 FinancePro. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Calculator container (initially hidden) -->
+    <div id="calculator-container" class="calculator-container" style="display: none;">
+        <div class="calculator-header">
+            <button id="back-to-home" class="back-button">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </button>
+            <h2 id="calculator-title"></h2>
+        </div>
+        <div class="calculator-content"></div>
     </div>
 
-    <!-- Load all calculator classes first -->
+    <!-- Load calculator scripts -->
     <script src="js/MortgageCalculator.js"></script>
     <script src="js/InvestmentCalculator.js"></script>
     <script src="js/DebtCalculator.js"></script>
     <script src="js/RetirementCalculator.js"></script>
     <script src="js/BudgetCalculator.js"></script>
-    
-    <!-- Then load main application logic -->
     <script src="js/main.js"></script>
 </body>
 </html>
