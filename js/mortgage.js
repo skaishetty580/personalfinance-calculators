@@ -2,6 +2,9 @@
 class MortgageCalculator {
     constructor(container) {
         this.container = container;
+        this.currentPage = 1;
+        this.itemsPerPage = 5;
+        this.amortizationData = [];
         this.renderForm();
         this.setupEventListeners();
     }
@@ -367,13 +370,18 @@ class MortgageCalculator {
 
         // Pagination
         document.getElementById('prev-page').addEventListener('click', () => {
-            // In a full implementation, this would navigate to the previous page of amortization data
-            alert('Previous page would be implemented in a full version.');
+            if (this.currentPage > 1) {
+                this.currentPage--;
+                this.renderAmortizationTable();
+            }
         });
 
         document.getElementById('next-page').addEventListener('click', () => {
-            // In a full implementation, this would navigate to the next page of amortization data
-            alert('Next page would be implemented in a full version.');
+            const totalPages = Math.ceil(this.amortizationData.length / 12 / this.itemsPerPage);
+            if (this.currentPage < totalPages) {
+                this.currentPage++;
+                this.renderAmortizationTable();
+            }
         });
     }
 
@@ -422,6 +430,20 @@ class MortgageCalculator {
         const payoffDate = new Date(startDate);
         payoffDate.setMonth(payoffDate.getMonth() + numberOfPayments);
         
+        // Generate amortization schedule
+        this.generateAmortizationSchedule(
+            loanAmount,
+            monthlyInterestRate,
+            numberOfPayments,
+            monthlyPaymentPI,
+            startDate,
+            monthlyTaxes,
+            monthlyInsurance,
+            pmi,
+            hoa,
+            extraPayment
+        );
+        
         // Update results display
         this.updateResults(
             totalMonthlyPayment,
@@ -437,6 +459,139 @@ class MortgageCalculator {
         
         // Show results
         document.getElementById('mortgage-results').style.display = 'block';
+    }
+
+    generateAmortizationSchedule(
+        loanAmount,
+        monthlyInterestRate,
+        numberOfPayments,
+        monthlyPayment,
+        startDate,
+        monthlyTaxes,
+        monthlyInsurance,
+        pmi,
+        hoa,
+        extraPayment
+    ) {
+        this.amortizationData = [];
+        let balance = loanAmount;
+        let totalInterest = 0;
+        let currentDate = new Date(startDate);
+        
+        for (let i = 1; i <= numberOfPayments; i++) {
+            const interestPayment = balance * monthlyInterestRate;
+            const principalPayment = monthlyPayment - interestPayment;
+            const totalPayment = monthlyPayment + monthlyTaxes + monthlyInsurance + pmi + hoa + extraPayment;
+            
+            balance -= principalPayment;
+            if (balance < 0) balance = 0;
+            
+            totalInterest += interestPayment;
+            
+            this.amortizationData.push({
+                paymentNumber: i,
+                date: new Date(currentDate),
+                principal: principalPayment,
+                interest: interestPayment,
+                taxes: monthlyTaxes,
+                insurance: monthlyInsurance,
+                pmi: pmi,
+                hoa: hoa,
+                extraPayment: extraPayment,
+                totalPayment: totalPayment,
+                remainingBalance: balance
+            });
+            
+            currentDate.setMonth(currentDate.getMonth() + 1);
+        }
+        
+        this.renderAmortizationTable();
+    }
+
+    renderAmortizationTable() {
+        const tableBody = document.getElementById('amortization-body');
+        tableBody.innerHTML = '';
+        
+        // Calculate yearly totals
+        const yearlyData = [];
+        let yearStart = 0;
+        let yearEnd = Math.min(12, this.amortizationData.length);
+        
+        while (yearStart < this.amortizationData.length) {
+            const yearPayments = this.amortizationData.slice(yearStart, yearEnd);
+            const yearPrincipal = yearPayments.reduce((sum, payment) => sum + payment.principal, 0);
+            const yearInterest = yearPayments.reduce((sum, payment) => sum + payment.interest, 0);
+            const yearTaxesFees = yearPayments.reduce((sum, payment) => sum + payment.taxes + payment.insurance + payment.pmi + payment.hoa, 0);
+            const yearTotal = yearPayments.reduce((sum, payment) => sum + payment.totalPayment, 0);
+            const yearEndBalance = yearPayments[yearPayments.length - 1].remainingBalance;
+            
+            yearlyData.push({
+                year: Math.floor(yearStart / 12) + 1,
+                principal: yearPrincipal,
+                interest: yearInterest,
+                taxesFees: yearTaxesFees,
+                total: yearTotal,
+                balance: yearEndBalance
+            });
+            
+            yearStart = yearEnd;
+            yearEnd = Math.min(yearEnd + 12, this.amortizationData.length);
+        }
+        
+        // Pagination
+        const startIdx = (this.currentPage - 1) * this.itemsPerPage;
+        const endIdx = Math.min(startIdx + this.itemsPerPage, yearlyData.length);
+        const paginatedData = yearlyData.slice(startIdx, endIdx);
+        
+        // Render table rows
+        paginatedData.forEach(year => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td style="padding: 12px; border-bottom: 1px solid #eee;">Year ${year.year}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee;">$${year.principal.toFixed(2)}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee;">$${year.interest.toFixed(2)}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee;">$${year.taxesFees.toFixed(2)}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee;">$${year.total.toFixed(2)}</td>
+                <td style="padding: 12px; border-bottom: 1px solid #eee;">$${year.balance.toFixed(2)}</td>
+            `;
+            tableBody.appendChild(row);
+        });
+        
+        // Update pagination buttons
+        this.updatePaginationButtons(yearlyData.length);
+    }
+
+    updatePaginationButtons(totalItems) {
+        const totalPages = Math.ceil(totalItems / this.itemsPerPage);
+        const paginationContainer = document.querySelector('.pagination');
+        
+        // Clear existing buttons (except prev/next)
+        const prevBtn = document.getElementById('prev-page');
+        const nextBtn = document.getElementById('next-page');
+        const paginationDiv = prevBtn.parentElement;
+        paginationDiv.innerHTML = '';
+        paginationDiv.appendChild(prevBtn);
+        
+        // Add page buttons
+        for (let i = 1; i <= totalPages; i++) {
+            const pageBtn = document.createElement('button');
+            pageBtn.className = 'button back-button';
+            if (i === this.currentPage) {
+                pageBtn.classList.add('active');
+            }
+            pageBtn.textContent = i;
+            pageBtn.addEventListener('click', () => {
+                this.currentPage = i;
+                this.renderAmortizationTable();
+            });
+            paginationDiv.appendChild(pageBtn);
+        }
+        
+        paginationDiv.appendChild(nextBtn);
+        
+        // Disable prev/next buttons when appropriate
+        prevBtn.disabled = this.currentPage === 1;
+        nextBtn.disabled = this.currentPage === totalPages;
     }
 
     updateResults(
