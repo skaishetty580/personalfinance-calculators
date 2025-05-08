@@ -1,3 +1,4 @@
+// app.js
 class FinanceApp {
     constructor() {
         this.calculators = {
@@ -15,14 +16,6 @@ class FinanceApp {
     init() {
         this.setupCalculatorCards();
         this.setupBackButton();
-        this.loadChartJS();
-    }
-
-    loadChartJS() {
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
-        script.onload = () => console.log('Chart.js loaded');
-        document.head.appendChild(script);
     }
 
     setupCalculatorCards() {
@@ -74,42 +67,36 @@ class FinanceApp {
         calculatorContent.innerHTML = '';
         
         // Load the appropriate calculator
-        switch(calculatorType) {
-            case 'mortgage':
-                if (!this.calculators.mortgage) {
-                    this.calculators.mortgage = new MortgageCalculator(calculatorContent);
-                } else {
-                    calculatorContent.innerHTML = '';
-                    this.calculators.mortgage.container = calculatorContent;
-                    this.calculators.mortgage.renderForm();
-                }
-                this.currentCalculator = this.calculators.mortgage;
-                break;
-                
-            case 'tax':
-                if (!this.calculators.tax) {
-                    this.calculators.tax = new TaxCalculator(calculatorContent);
-                } else {
-                    calculatorContent.innerHTML = '';
-                    this.calculators.tax.container = calculatorContent;
-                    this.calculators.tax.renderForm();
-                }
-                this.currentCalculator = this.calculators.tax;
-                break;
-                
-            // Add cases for other calculators here
-                
-            default:
-                calculatorContent.innerHTML = `
-                    <div style="text-align: center; padding: 40px 0;">
-                        <i class="fas fa-cogs" style="font-size: 50px; color: var(--gray-color); margin-bottom: 20px;"></i>
-                        <h3>Calculator Coming Soon</h3>
-                        <p>This calculator is not yet implemented in this demo.</p>
-                        <button class="button back-button" style="margin-top: 20px;">
-                            <i class="fas fa-arrow-left"></i> Back to Home
-                        </button>
-                    </div>
-                `;
+        if (calculatorType === 'mortgage') {
+            this.calculators.mortgage = new MortgageCalculator(calculatorContent);
+            this.currentCalculator = this.calculators.mortgage;
+        } 
+        else if (calculatorType === 'tax') {
+            if (!this.calculators.tax) {
+                this.calculators.tax = new TaxCalculator(calculatorContent);
+            } else {
+                calculatorContent.innerHTML = '';
+                this.calculators.tax.container = calculatorContent;
+                this.calculators.tax.renderForm();
+            }
+            this.currentCalculator = this.calculators.tax;
+        }
+        else {
+            calculatorContent.innerHTML = `
+                <div style="text-align: center; padding: 40px 0;">
+                    <i class="fas fa-cogs" style="font-size: 50px; color: var(--gray-color); margin-bottom: 20px;"></i>
+                    <h3>Calculator Coming Soon</h3>
+                    <p>This calculator is not yet implemented in this demo.</p>
+                    <button class="button back-button" style="margin-top: 20px;">
+                        <i class="fas fa-arrow-left"></i> Back to Home
+                    </button>
+                </div>
+            `;
+            
+            // Add event listener to back button
+            calculatorContent.querySelector('.back-button').addEventListener('click', () => {
+                this.showHomePage();
+            });
         }
         
         // Scroll to top
