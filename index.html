@@ -6,6 +6,7 @@
     <title>FinancePro | Professional Financial Calculators</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js">
     <style>
         /* Base Styles */
         :root {
@@ -567,71 +568,16 @@
     </footer>
 
     <script>
-        class MortgageCalculator {
-            constructor(container) {
-                this.container = container;
-                this.renderForm();
-                this.setupEventListeners();
-            }
-
-            renderForm() {
-                this.container.innerHTML = `
-                    <div class="input-group">
-                        <label for="mortgage-amount">Loan Amount ($)</label>
-                        <input type="number" id="mortgage-amount" placeholder="300,000">
-                    </div>
-                    <div class="input-group">
-                        <label for="interest-rate">Interest Rate (%)</label>
-                        <input type="number" id="interest-rate" placeholder="3.5" step="0.01">
-                    </div>
-                    <div class="input-group">
-                        <label for="loan-term">Loan Term (years)</label>
-                        <input type="number" id="loan-term" placeholder="30">
-                    </div>
-                    <button id="calculate-mortgage" class="button cta-button">Calculate</button>
-                    <div id="mortgage-results" class="results-container" style="display: none;">
-                        <h3>Mortgage Results</h3>
-                        <div class="results-grid">
-                            <div class="result-item">
-                                <h4>Monthly Payment</h4>
-                                <p id="monthly-payment">-</p>
-                            </div>
-                            <div class="result-item">
-                                <h4>Total Interest</h4>
-                                <p id="total-interest">-</p>
-                            </div>
-                            <div class="result-item">
-                                <h4>Total Cost</h4>
-                                <p id="total-cost">-</p>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }
-
-            calculate() {
-                const amount = parseFloat(document.getElementById('mortgage-amount').value) || 300000;
-                const rate = parseFloat(document.getElementById('interest-rate').value) || 3.5;
-                const term = parseInt(document.getElementById('loan-term').value) || 30;
-                
-                const monthlyRate = rate / 100 / 12;
-                const payments = term * 12;
-                const monthlyPayment = amount * monthlyRate * 
-                    Math.pow(1 + monthlyRate, payments) / 
-                    (Math.pow(1 + monthlyRate, payments) - 1);
-                const totalInterest = (monthlyPayment * payments) - amount;
-                
-                document.getElementById('monthly-payment').textContent = `$${monthlyPayment.toFixed(2)}`;
-                document.getElementById('total-interest').textContent = `$${totalInterest.toFixed(2)}`;
-                document.getElementById('total-cost').textContent = `$${(amount + totalInterest).toFixed(2)}`;
-                
-                document.getElementById('mortgage-results').style.display = 'block';
-            }
-
-            setupEventListeners() {
-                document.getElementById('calculate-mortgage').addEventListener('click', () => this.calculate());
-            }
-        }
+       <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+       <!-- Before closing </body> tag -->
+<script src="js/utils.js"></script>
+<script src="js/mortgage.js"></script>
+<script src="js/investment.js"></script>
+<script src="js/debt.js"></script>
+<script src="js/retirement.js"></script>
+<script src="js/budget.js"></script>
+<script src="js/tax.js"></script>
+<script src="js/app.js"></script>
 
         class TaxCalculator {
             constructor(container) {
@@ -881,14 +827,6 @@
             new FinanceApp();
         });
     </script>
-    <!-- Before closing </body> tag -->
-<script src="js/utils.js"></script>
-<script src="js/mortgage.js"></script>
-<script src="js/investment.js"></script>
-<script src="js/debt.js"></script>
-<script src="js/retirement.js"></script>
-<script src="js/budget.js"></script>
-<script src="js/tax.js"></script>
-<script src="js/app.js"></script>
+
 </body>
 </html>
