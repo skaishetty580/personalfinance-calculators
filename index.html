@@ -30,6 +30,9 @@
             line-height: 1.6;
             color: var(--dark-color);
             background-color: #f9fafc;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         .container {
@@ -231,6 +234,33 @@
             margin-bottom: 30px;
         }
 
+        /* Input Groups */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+        }
+
         /* Buttons */
         .button {
             display: inline-flex;
@@ -281,6 +311,86 @@
             color: var(--primary-color);
         }
 
+        /* Results */
+        .results-container {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            margin-top: 30px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .result-item {
+            padding: 15px;
+            background-color: rgba(67, 97, 238, 0.05);
+            border-radius: var(--border-radius);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .result-item h4 {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        /* Footer */
+        .main-footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 30px 0;
+            margin-top: auto;
+        }
+
+        .footer-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .footer-logo i {
+            color: var(--primary-color);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .copyright {
+            width: 100%;
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
         /* Responsive Styles */
         @media (max-width: 992px) {
             .hero .container {
@@ -305,6 +415,16 @@
             
             .section-title {
                 font-size: 1.8rem;
+            }
+
+            .footer-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-links {
+                flex-wrap: wrap;
+                justify-content: center;
             }
         }
 
@@ -400,6 +520,15 @@
                     <p>Analyze spending patterns and get personalized recommendations.</p>
                     <button class="button card-button">Use Calculator</button>
                 </div>
+                
+                <div class="calculator-card" data-calculator="tax">
+                    <div class="card-icon">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                    </div>
+                    <h3>Tax Calculator</h3>
+                    <p>Estimate your tax liability and plan for tax-efficient strategies.</p>
+                    <button class="button card-button">Use Calculator</button>
+                </div>
             </div>
         </div>
     </section>
@@ -416,6 +545,26 @@
             <div class="calculator-content"></div>
         </div>
     </div>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-logo">
+                    <i class="fas fa-calculator"></i>
+                    <span>Finance<span style="color: var(--primary-color);">Pro</span></span>
+                </div>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Disclaimer</a>
+                    <a href="#">Advertise With Us</a>
+                    <a href="#">Contact</a>
+                </div>
+                <div class="copyright">
+                    &copy; 2023 FinancePro. All rights reserved. The information provided by FinancePro is for general informational purposes only and should not be considered as financial advice.
+                </div>
+            </div>
+        </div>
+    </footer>
 
     <script>
         class MortgageCalculator {
@@ -440,9 +589,22 @@
                         <input type="number" id="loan-term" placeholder="30">
                     </div>
                     <button id="calculate-mortgage" class="button cta-button">Calculate</button>
-                    <div id="mortgage-results" style="margin-top: 30px; display: none;">
+                    <div id="mortgage-results" class="results-container" style="display: none;">
                         <h3>Mortgage Results</h3>
-                        <div id="mortgage-summary" style="margin-bottom: 20px;"></div>
+                        <div class="results-grid">
+                            <div class="result-item">
+                                <h4>Monthly Payment</h4>
+                                <p id="monthly-payment">-</p>
+                            </div>
+                            <div class="result-item">
+                                <h4>Total Interest</h4>
+                                <p id="total-interest">-</p>
+                            </div>
+                            <div class="result-item">
+                                <h4>Total Cost</h4>
+                                <p id="total-cost">-</p>
+                            </div>
+                        </div>
                     </div>
                 `;
             }
@@ -459,17 +621,139 @@
                     (Math.pow(1 + monthlyRate, payments) - 1);
                 const totalInterest = (monthlyPayment * payments) - amount;
                 
-                document.getElementById('mortgage-summary').innerHTML = `
-                    <p><strong>Monthly Payment:</strong> $${monthlyPayment.toFixed(2)}</p>
-                    <p><strong>Total Interest:</strong> $${totalInterest.toFixed(2)}</p>
-                    <p><strong>Total Cost:</strong> $${(amount + totalInterest).toFixed(2)}</p>
-                `;
+                document.getElementById('monthly-payment').textContent = `$${monthlyPayment.toFixed(2)}`;
+                document.getElementById('total-interest').textContent = `$${totalInterest.toFixed(2)}`;
+                document.getElementById('total-cost').textContent = `$${(amount + totalInterest).toFixed(2)}`;
                 
                 document.getElementById('mortgage-results').style.display = 'block';
             }
 
             setupEventListeners() {
                 document.getElementById('calculate-mortgage').addEventListener('click', () => this.calculate());
+            }
+        }
+
+        class TaxCalculator {
+            constructor(container) {
+                this.container = container;
+                this.renderForm();
+                this.setupEventListeners();
+            }
+
+            renderForm() {
+                this.container.innerHTML = `
+                    <div class="input-group">
+                        <label for="tax-income">Annual Income ($)</label>
+                        <input type="number" id="tax-income" placeholder="75,000">
+                    </div>
+                    <div class="input-group">
+                        <label for="tax-filing-status">Filing Status</label>
+                        <select id="tax-filing-status">
+                            <option value="single">Single</option>
+                            <option value="married">Married Filing Jointly</option>
+                            <option value="head">Head of Household</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="tax-state">State</label>
+                        <select id="tax-state">
+                            <option value="none">No State Income Tax</option>
+                            <option value="ca">California</option>
+                            <option value="ny">New York</option>
+                            <option value="tx">Texas</option>
+                            <option value="fl">Florida</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="tax-deductions">Deductions ($)</label>
+                        <input type="number" id="tax-deductions" placeholder="12,950">
+                    </div>
+                    <button id="calculate-tax" class="button cta-button">Calculate Tax</button>
+                    <div id="tax-results" class="results-container" style="display: none;">
+                        <h3>Tax Estimation</h3>
+                        <div class="results-grid">
+                            <div class="result-item">
+                                <h4>Federal Tax</h4>
+                                <p id="federal-tax">-</p>
+                            </div>
+                            <div class="result-item">
+                                <h4>State Tax</h4>
+                                <p id="state-tax">-</p>
+                            </div>
+                            <div class="result-item">
+                                <h4>Effective Rate</h4>
+                                <p id="effective-rate">-</p>
+                            </div>
+                            <div class="result-item">
+                                <h4>Take Home Pay</h4>
+                                <p id="take-home">-</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            calculate() {
+                const income = parseFloat(document.getElementById('tax-income').value) || 75000;
+                const filingStatus = document.getElementById('tax-filing-status').value;
+                const state = document.getElementById('tax-state').value;
+                const deductions = parseFloat(document.getElementById('tax-deductions').value) || 12950;
+                
+                // Simplified tax calculation (for demo purposes)
+                const taxableIncome = Math.max(0, income - deductions);
+                
+                // Federal tax calculation (simplified 2023 brackets)
+                let federalTax = 0;
+                if (filingStatus === 'single') {
+                    if (taxableIncome <= 10275) federalTax = taxableIncome * 0.10;
+                    else if (taxableIncome <= 41775) federalTax = 1027.50 + (taxableIncome - 10275) * 0.12;
+                    else if (taxableIncome <= 89075) federalTax = 4807.50 + (taxableIncome - 41775) * 0.22;
+                    else if (taxableIncome <= 170050) federalTax = 15213.50 + (taxableIncome - 89075) * 0.24;
+                    else if (taxableIncome <= 215950) federalTax = 34647.50 + (taxableIncome - 170050) * 0.32;
+                    else if (taxableIncome <= 539900) federalTax = 49335.50 + (taxableIncome - 215950) * 0.35;
+                    else federalTax = 162718 + (taxableIncome - 539900) * 0.37;
+                } else if (filingStatus === 'married') {
+                    if (taxableIncome <= 20550) federalTax = taxableIncome * 0.10;
+                    else if (taxableIncome <= 83550) federalTax = 2055 + (taxableIncome - 20550) * 0.12;
+                    else if (taxableIncome <= 178150) federalTax = 9615 + (taxableIncome - 83550) * 0.22;
+                    else if (taxableIncome <= 340100) federalTax = 30427 + (taxableIncome - 178150) * 0.24;
+                    else if (taxableIncome <= 431900) federalTax = 69295 + (taxableIncome - 340100) * 0.32;
+                    else if (taxableIncome <= 647850) federalTax = 98671 + (taxableIncome - 431900) * 0.35;
+                    else federalTax = 174253.50 + (taxableIncome - 647850) * 0.37;
+                } else { // head of household
+                    if (taxableIncome <= 14650) federalTax = taxableIncome * 0.10;
+                    else if (taxableIncome <= 55900) federalTax = 1465 + (taxableIncome - 14650) * 0.12;
+                    else if (taxableIncome <= 89050) federalTax = 6415 + (taxableIncome - 55900) * 0.22;
+                    else if (taxableIncome <= 170050) federalTax = 13708 + (taxableIncome - 89050) * 0.24;
+                    else if (taxableIncome <= 215950) federalTax = 33148 + (taxableIncome - 170050) * 0.32;
+                    else if (taxableIncome <= 539900) federalTax = 47836 + (taxableIncome - 215950) * 0.35;
+                    else federalTax = 161218.50 + (taxableIncome - 539900) * 0.37;
+                }
+                
+                // State tax calculation (simplified)
+                let stateTax = 0;
+                if (state === 'ca') {
+                    stateTax = taxableIncome * 0.06; // Approximate CA rate
+                } else if (state === 'ny') {
+                    stateTax = taxableIncome * 0.05; // Approximate NY rate
+                } else if (state === 'tx' || state === 'fl') {
+                    stateTax = 0; // No state income tax
+                }
+                
+                const totalTax = federalTax + stateTax;
+                const effectiveRate = (totalTax / income) * 100;
+                const takeHomePay = income - totalTax;
+                
+                document.getElementById('federal-tax').textContent = `$${federalTax.toFixed(2)}`;
+                document.getElementById('state-tax').textContent = stateTax ? `$${stateTax.toFixed(2)}` : '$0.00';
+                document.getElementById('effective-rate').textContent = `${effectiveRate.toFixed(1)}%`;
+                document.getElementById('take-home').textContent = `$${takeHomePay.toFixed(2)}`;
+                
+                document.getElementById('tax-results').style.display = 'block';
+            }
+
+            setupEventListeners() {
+                document.getElementById('calculate-tax').addEventListener('click', () => this.calculate());
             }
         }
 
@@ -480,7 +764,8 @@
                     investment: null,
                     debt: null,
                     retirement: null,
-                    budget: null
+                    budget: null,
+                    tax: null
                 };
                 this.currentCalculator = null;
                 this.init();
@@ -531,14 +816,15 @@
                     investment: 'Investment Calculator',
                     debt: 'Debt Payoff Calculator',
                     retirement: 'Retirement Planner',
-                    budget: 'Budget Analyzer'
+                    budget: 'Budget Analyzer',
+                    tax: 'Tax Calculator'
                 };
                 document.getElementById('calculator-title').textContent = titleMap[calculatorType];
                 
                 // Clear previous calculator
                 calculatorContent.innerHTML = '';
                 
-                // For this example, we'll only implement the Mortgage Calculator
+                // Load the appropriate calculator
                 if (calculatorType === 'mortgage') {
                     if (!this.calculators.mortgage) {
                         this.calculators.mortgage = new MortgageCalculator(calculatorContent);
@@ -548,7 +834,18 @@
                         this.calculators.mortgage.renderForm();
                     }
                     this.currentCalculator = this.calculators.mortgage;
-                } else {
+                } 
+                else if (calculatorType === 'tax') {
+                    if (!this.calculators.tax) {
+                        this.calculators.tax = new TaxCalculator(calculatorContent);
+                    } else {
+                        calculatorContent.innerHTML = '';
+                        this.calculators.tax.container = calculatorContent;
+                        this.calculators.tax.renderForm();
+                    }
+                    this.currentCalculator = this.calculators.tax;
+                }
+                else {
                     calculatorContent.innerHTML = `
                         <div style="text-align: center; padding: 40px 0;">
                             <i class="fas fa-cogs" style="font-size: 50px; color: var(--gray-color); margin-bottom: 20px;"></i>
