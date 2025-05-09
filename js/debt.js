@@ -6,6 +6,7 @@ class DebtCalculator {
         this.maxMonths = 600; // 50 year maximum to prevent infinite loops
         this.renderForm();
         this.setupEventListeners();
+        console.log('DebtCalculator initialized'); // Debug log
     }
 
     renderForm() {
@@ -60,13 +61,51 @@ class DebtCalculator {
                     <i class="fas fa-calculator"></i> Calculate Payoff Plan
                 </button>
                 
-                <div id="loading-indicator" style="display: none;">
-                    <p>Calculating... This may take a moment for large debts.</p>
-                    <progress id="calc-progress" value="0" max="100"></progress>
-                </div>
-                
                 <div id="debt-results" class="results-container" style="display: none;">
-                    <!-- Results content remains the same -->
+                    <h3>Debt Payoff Analysis</h3>
+                    
+                    <div class="results-grid">
+                        <div class="result-item">
+                            <h4>Total Debt</h4>
+                            <p id="total-debt">-</p>
+                        </div>
+                        <div class="result-item">
+                            <h4>Total Interest</h4>
+                            <p id="total-interest">-</p>
+                        </div>
+                        <div class="result-item">
+                            <h4>Payoff Time</h4>
+                            <p id="payoff-time">-</p>
+                        </div>
+                        <div class="result-item">
+                            <h4>Total Paid</h4>
+                            <p id="total-paid">-</p>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="debt-chart"></canvas>
+                    </div>
+                    
+                    <div class="payoff-plan">
+                        <h4>Payoff Plan</h4>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Month</th>
+                                        <th>Debt</th>
+                                        <th>Payment</th>
+                                        <th>Principal</th>
+                                        <th>Interest</th>
+                                        <th>Remaining</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="payoff-body">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
@@ -101,108 +140,86 @@ class DebtCalculator {
                 <i class="fas fa-trash"></i> Remove
             </button>
         `;
-        document.getElementById('debt-entries').appendChild(debtEntry);
+        this.container.querySelector('#debt-entries').appendChild(debtEntry);
         
         // Show remove button on all entries except the first one
-        const removeButtons = document.querySelectorAll('.remove-debt');
+        const removeButtons = this.container.querySelectorAll('.remove-debt');
         if (removeButtons.length > 1) {
             removeButtons[0].style.display = 'block';
         }
         
+        // Add event listener to the new remove button
         debtEntry.querySelector('.remove-debt').addEventListener('click', (e) => {
             e.preventDefault();
             debtEntry.remove();
             
-            if (document.querySelectorAll('.debt-entry').length === 1) {
-                document.querySelector('.remove-debt').style.display = 'none';
+            // Hide remove button on first entry if only one remains
+            if (this.container.querySelectorAll('.debt-entry').length === 1) {
+                this.container.querySelector('.remove-debt').style.display = 'none';
             }
         });
     }
 
     async calculate() {
-        // Validate inputs first
-        if (!this.validateInputs()) return;
-
         // Show loading state
-        this.showLoading(true);
-
+        const calculateBtn = this.container.querySelector('#calculate-debt');
+        calculateBtn.disabled = true;
+        calculateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculating...';
+        
         try {
-            // Process debts
-            this.processDebts();
+            // Get all debts
+            this.debts = [];
+            const debtEntries = this.container.querySelectorAll('.debt-entry');
+            
+            debtEntries.forEach((entry, index) => {
+                const name = entry.querySelector('.debt-name').value || `Debt ${index + 1}`;
+                const balance = parseFloat(entry.querySelector('.debt-balance').value) || 0;
+                const rate = parseFloat(entry.querySelector('.debt-rate').value) || 0;
+                const payment = parseFloat(entry.querySelector('.debt-payment').value) || 0;
+                
+                if (balance > 0 && payment > 0) {
+                    this.debts.push({
+                        name,
+                        balance,
+                        rate,
+                        payment,
+                        remaining: balance,
+                        interestPaid: 0
+                    });
+                }
+            });
+            
+            if (this.debts.length === 0) {
+                alert('Please enter at least one valid debt');
+                return;
+            }
             
             // Get payoff method and extra payment
-            const method = document.getElementById('payoff-method').value;
-            const extraPayment = parseFloat(document.getElementById('extra-payment').value) || 0;
+            const method = this.container.querySelector('#payoff-method').value;
+            const extraPayment = parseFloat(this.container.querySelector('#extra-payment').value) || 0;
             
-            // Sort debts
-            this.sortDebts(method);
+            // Sort debts based on payoff method
+            if (method === 'avalanche') {
+                this.debts.sort((a, b) => b.rate - a.rate);
+            } else { // snowball
+                this.debts.sort((a, b) => a.balance - b.balance);
+            }
             
-            // Calculate payoff plan with progress updates
-            const result = await this.calculateWithProgress(extraPayment);
+            // Calculate payoff plan
+            const result = await this.calculatePayoffPlan(extraPayment);
             
             // Display results
             this.displayResults(result);
         } catch (error) {
             console.error('Calculation error:', error);
-            alert('Calculation failed: ' + error.message);
+            alert('An error occurred during calculation');
         } finally {
-            this.showLoading(false);
+            calculateBtn.disabled = false;
+            calculateBtn.innerHTML = '<i class="fas fa-calculator"></i> Calculate Payoff Plan';
         }
     }
 
-    validateInputs() {
-        let hasValidDebt = false;
-        const debtEntries = document.querySelectorAll('.debt-entry');
-        
-        debtEntries.forEach((entry) => {
-            const balance = parseFloat(entry.querySelector('.debt-balance').value) || 0;
-            const payment = parseFloat(entry.querySelector('.debt-payment').value) || 0;
-            
-            if (balance > 0 && payment > 0) {
-                hasValidDebt = true;
-            }
-        });
-        
-        if (!hasValidDebt) {
-            alert('Please enter at least one valid debt with balance and payment');
-            return false;
-        }
-        
-        return true;
-    }
-
-    processDebts() {
-        this.debts = [];
-        const debtEntries = document.querySelectorAll('.debt-entry');
-        
-        debtEntries.forEach((entry, index) => {
-            const name = entry.querySelector('.debt-name').value || `Debt ${index + 1}`;
-            const balance = parseFloat(entry.querySelector('.debt-balance').value) || 0;
-            const rate = parseFloat(entry.querySelector('.debt-rate').value) || 0;
-            const payment = parseFloat(entry.querySelector('.debt-payment').value) || 0;
-            
-            if (balance > 0 && payment > 0) {
-                this.debts.push({
-                    name,
-                    balance,
-                    rate,
-                    payment,
-                    remaining: balance,
-                    interestPaid: 0
-                });
-            }
-        });
-    }
-
-    sortDebts(method) {
-        if (method === 'avalanche') {
-            this.debts.sort((a, b) => b.rate - a.rate || a.balance - b.balance);
-        } else { // snowball
-            this.debts.sort((a, b) => a.balance - b.balance || b.rate - a.rate);
-        }
-    }
-
-    calculateWithProgress(extraPayment) {
+    calculatePayoffPlan(extraPayment) {
         return new Promise((resolve) => {
             const result = {
                 payoffPlan: [],
@@ -276,11 +293,6 @@ class DebtCalculator {
                     
                     // Yield to the browser every 50ms of calculation
                     if (performance.now() - startTime > 50) {
-                        // Update progress
-                        const progress = Math.min(100, Math.floor((result.months / this.maxMonths) * 100);
-                        document.getElementById('calc-progress').value = progress;
-                        
-                        // Schedule next chunk
                         setTimeout(calculateChunk, 0);
                         return;
                     }
@@ -294,38 +306,28 @@ class DebtCalculator {
         });
     }
 
-    showLoading(show) {
-        const calculateBtn = document.getElementById('calculate-debt');
-        const loadingIndicator = document.getElementById('loading-indicator');
-        const results = document.getElementById('debt-results');
+    displayResults({ payoffPlan, totalDebt, totalInterest, totalPaid, months }) {
+        // Display results
+        this.container.querySelector('#total-debt').textContent = `$${totalDebt.toLocaleString('en-US')}`;
+        this.container.querySelector('#total-interest').textContent = `$${totalInterest.toLocaleString('en-US', {maximumFractionDigits: 0})}`;
+        this.container.querySelector('#payoff-time').textContent = `${months} months (${(months/12).toFixed(1)} years)`;
+        this.container.querySelector('#total-paid').textContent = `$${totalPaid.toLocaleString('en-US', {maximumFractionDigits: 0})}`;
         
-        if (show) {
-            calculateBtn.disabled = true;
-            loadingIndicator.style.display = 'block';
-            results.style.display = 'none';
-            document.getElementById('calc-progress').value = 0;
-        } else {
-            calculateBtn.disabled = false;
-            loadingIndicator.style.display = 'none';
-        }
-    }
-
-    displayResults(result) {
-        document.getElementById('total-debt').textContent = `$${result.totalDebt.toLocaleString('en-US')}`;
-        document.getElementById('total-interest').textContent = `$${result.totalInterest.toLocaleString('en-US', {maximumFractionDigits: 0})}`;
-        document.getElementById('payoff-time').textContent = `${result.months} months (${(result.months/12).toFixed(1)} years)`;
-        document.getElementById('total-paid').textContent = `$${result.totalPaid.toLocaleString('en-US', {maximumFractionDigits: 0})}`;
+        // Generate payoff plan table
+        this.generatePayoffPlanTable(payoffPlan);
         
-        this.generatePayoffPlanTable(result.payoffPlan);
-        this.generateChart(result.totalDebt, result.totalInterest);
-        document.getElementById('debt-results').style.display = 'block';
+        // Generate chart
+        this.generateChart(totalDebt, totalInterest);
+        
+        // Show results
+        this.container.querySelector('#debt-results').style.display = 'block';
     }
 
     generatePayoffPlanTable(plan) {
-        const payoffBody = document.getElementById('payoff-body');
+        const payoffBody = this.container.querySelector('#payoff-body');
         payoffBody.innerHTML = '';
         
-        // Show every 6 months and important milestones
+        // Only show every 6 months and important milestones
         const filteredPlan = plan.filter((item, index) => {
             return item.month % 6 === 0 || 
                    index === 0 || 
@@ -348,7 +350,7 @@ class DebtCalculator {
     }
 
     generateChart(principal, interest) {
-        const ctx = document.getElementById('debt-chart').getContext('2d');
+        const ctx = this.container.querySelector('#debt-chart').getContext('2d');
         
         if (this.chart) {
             this.chart.destroy();
@@ -360,14 +362,19 @@ class DebtCalculator {
                 labels: ['Principal', 'Interest'],
                 datasets: [{
                     data: [principal, interest],
-                    backgroundColor: ['#4361ee', '#f72585'],
+                    backgroundColor: [
+                        '#4361ee',
+                        '#f72585'
+                    ],
                     borderWidth: 0
                 }]
             },
             options: {
                 responsive: true,
                 plugins: {
-                    legend: { position: 'right' },
+                    legend: {
+                        position: 'right',
+                    },
                     tooltip: {
                         callbacks: {
                             label: function(context) {
@@ -385,12 +392,14 @@ class DebtCalculator {
     }
 
     setupEventListeners() {
-        document.getElementById('add-debt').addEventListener('click', (e) => {
+        // Add debt button
+        this.container.querySelector('#add-debt').addEventListener('click', (e) => {
             e.preventDefault();
             this.addDebtEntry();
         });
         
-        document.getElementById('calculate-debt').addEventListener('click', (e) => {
+        // Calculate button
+        this.container.querySelector('#calculate-debt').addEventListener('click', (e) => {
             e.preventDefault();
             this.calculate();
         });
