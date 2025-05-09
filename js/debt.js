@@ -2,6 +2,7 @@ class DebtCalculator {
     constructor(container) {
         this.container = container;
         this.debts = [];
+        this.chart = null;
         this.renderForm();
         this.setupEventListeners();
     }
@@ -139,10 +140,21 @@ class DebtCalculator {
         `;
         document.getElementById('debt-entries').appendChild(debtEntry);
         
-        // Add event listener to remove button
+        // Show remove button on all entries except the first one
+        const removeButtons = document.querySelectorAll('.remove-debt');
+        if (removeButtons.length > 1) {
+            removeButtons[0].style.display = 'block';
+        }
+        
+        // Add event listener to the new remove button
         debtEntry.querySelector('.remove-debt').addEventListener('click', (e) => {
             e.preventDefault();
             debtEntry.remove();
+            
+            // Hide remove button on first entry if only one remains
+            if (document.querySelectorAll('.debt-entry').length === 1) {
+                document.querySelector('.remove-debt').style.display = 'none';
+            }
         });
     }
 
@@ -337,6 +349,9 @@ class DebtCalculator {
             this.addDebtEntry();
         });
         
-        document.getElementById('calculate-debt').addEventListener('click', () => this.calculate());
+        document.getElementById('calculate-debt').addEventListener('click', (e) => {
+            e.preventDefault();
+            this.calculate();
+        });
     }
 }
