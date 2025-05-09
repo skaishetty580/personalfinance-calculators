@@ -1,87 +1,78 @@
-class Formatter {
-    static currency(amount) {
+// Utility functions for financial calculations
+class FinanceUtils {
+    static formatCurrency(amount, decimals = 2) {
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: 'USD',
-            minimumFractionDigits: 2
+            minimumFractionDigits: decimals,
+            maximumFractionDigits: decimals
         }).format(amount);
     }
 
-    static percentage(value) {
-        return `${parseFloat(value).toFixed(2)}%`;
+    static calculateCompoundInterest(principal, rate, years, compoundFrequency = 12, monthlyContribution = 0) {
+        const periodicRate = rate / 100 / compoundFrequency;
+        const periods = years * compoundFrequency;
+        let balance = principal;
+        
+        for (let i = 0; i < periods; i++) {
+            balance += monthlyContribution;
+            balance *= (1 + periodicRate);
+        }
+        
+        return balance;
     }
 
-    static formatDate(date) {
-        return date.toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-        });
+    static calculateMonthlyPayment(principal, rate, years) {
+        const monthlyRate = rate / 100 / 12;
+        const payments = years * 12;
+        return principal * monthlyRate * 
+            Math.pow(1 + monthlyRate, payments) / 
+            (Math.pow(1 + monthlyRate, payments) - 1);
+    }
+
+    static calculateAmortizationSchedule(principal, rate, years) {
+        const monthlyPayment = this.calculateMonthlyPayment(principal, rate, years);
+        const monthlyRate = rate / 100 / 12;
+        const payments = years * 12;
+        let balance = principal;
+        const schedule = [];
+        
+        for (let i = 1; i <= payments; i++) {
+            const interestPayment = balance * monthlyRate;
+            const principalPayment = monthlyPayment - interestPayment;
+            balance -= principalPayment;
+            
+            if (balance < 0) balance = 0;
+            
+            schedule.push({
+                month: i,
+                payment: monthlyPayment,
+                principal: principalPayment,
+                interest: interestPayment,
+                balance
+            });
+        }
+        
+        return schedule;
     }
 }
 
-class InputValidator {
-    static validateNumber(input, min = 0, max = Number.MAX_SAFE_INTEGER) {
-        const value = parseFloat(input);
-        return !isNaN(value) && value >= min && value <= max;
+// DOM utility functions
+class DOMUtils {
+    static showElement(id) {
+        const element = document.getElementById(id);
+        if (element) element.style.display = 'block';
     }
 
-    static validatePositiveNumber(input) {
-        return this.validateNumber(input, 0);
-    }
-}
-
-class ChartRenderer {
-    static renderBarChart(canvasId, labels, data, colors) {
-        const ctx = document.getElementById(canvasId).getContext('2d');
-        return new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: data,
-                    backgroundColor: colors,
-                    borderColor: colors,
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: false
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
+    static hideElement(id) {
+        const element = document.getElementById(id);
+        if (element) element.style.display = 'none';
     }
 
-    static renderPieChart(canvasId, labels, data, colors) {
-        const ctx = document.getElementById(canvasId).getContext('2d');
-        return new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: labels,
-                datasets: [{
-                    data: data,
-                    backgroundColor: colors,
-                    borderColor: '#fff',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
-            }
-        });
+    static toggleElement(id) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.style.display = element.style.display === 'none' ? 'block' : 'none';
+        }
     }
 }
