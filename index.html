@@ -663,21 +663,6 @@
     <script src="js/budget.js"></script>
     <script src="js/tax.js"></script>
     <script src="js/app.js"></script>
-    <script>
-        // Wait for DOM to be fully loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            // Get the container element
-            const container = document.getElementById('debt-calculator-container');
-            
-            // Initialize the calculator
-            try {
-                new DebtCalculator(container);
-                console.log('Debt calculator initialized successfully');
-            } catch (error) {
-                console.error('Failed to initialize debt calculator:', error);
-                container.innerHTML = '<p class="error">Error loading calculator. Please try again.</p>';
-            }
-        });
-    </script>
+
 </body>
 </html>
