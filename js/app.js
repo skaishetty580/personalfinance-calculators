@@ -19,7 +19,6 @@ class FinanceApp {
     }
 
     loadChartJS() {
-        // Load Chart.js if not already loaded
         if (typeof Chart === 'undefined') {
             const script = document.createElement('script');
             script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
@@ -62,16 +61,40 @@ class FinanceApp {
         const calculatorContent = document.querySelector('.calculator-content');
         container.style.display = 'block';
         
-        // Set calculator title
-        const titleMap = {
-            mortgage: 'Mortgage Calculator',
-            investment: 'Investment Calculator',
-            debt: 'Debt Payoff Calculator',
-            retirement: 'Retirement Planner',
-            budget: 'Budget Analyzer',
-            tax: 'Tax Calculator'
+        // Set calculator title and icon
+        const calculatorInfo = {
+            mortgage: {
+                title: 'Mortgage Calculator',
+                icon: 'fa-home'
+            },
+            investment: {
+                title: 'Investment Calculator',
+                icon: 'fa-piggy-bank'
+            },
+            debt: {
+                title: 'Debt Payoff Calculator',
+                icon: 'fa-credit-card'
+            },
+            retirement: {
+                title: 'Retirement Planner',
+                icon: 'fa-umbrella-beach'
+            },
+            budget: {
+                title: 'Budget Analyzer',
+                icon: 'fa-wallet'
+            },
+            tax: {
+                title: 'Tax Calculator',
+                icon: 'fa-file-invoice-dollar'
+            }
         };
-        document.getElementById('calculator-title').textContent = titleMap[calculatorType];
+        
+        const currentCalculator = calculatorInfo[calculatorType];
+        const calculatorIcon = document.getElementById('calculator-icon');
+        const calculatorTitle = document.getElementById('calculator-title');
+        
+        calculatorTitle.textContent = currentCalculator.title;
+        calculatorIcon.className = `fas ${currentCalculator.icon}`;
         
         // Clear previous calculator
         calculatorContent.innerHTML = '';
@@ -82,7 +105,6 @@ class FinanceApp {
                 if (!this.calculators.mortgage) {
                     this.calculators.mortgage = new MortgageCalculator(calculatorContent);
                 } else {
-                    calculatorContent.innerHTML = '';
                     this.calculators.mortgage.container = calculatorContent;
                     this.calculators.mortgage.renderForm();
                 }
@@ -93,7 +115,6 @@ class FinanceApp {
                 if (!this.calculators.investment) {
                     this.calculators.investment = new InvestmentCalculator(calculatorContent);
                 } else {
-                    calculatorContent.innerHTML = '';
                     this.calculators.investment.container = calculatorContent;
                     this.calculators.investment.renderForm();
                 }
@@ -104,7 +125,6 @@ class FinanceApp {
                 if (!this.calculators.debt) {
                     this.calculators.debt = new DebtCalculator(calculatorContent);
                 } else {
-                    calculatorContent.innerHTML = '';
                     this.calculators.debt.container = calculatorContent;
                     this.calculators.debt.renderForm();
                 }
@@ -115,7 +135,6 @@ class FinanceApp {
                 if (!this.calculators.retirement) {
                     this.calculators.retirement = new RetirementCalculator(calculatorContent);
                 } else {
-                    calculatorContent.innerHTML = '';
                     this.calculators.retirement.container = calculatorContent;
                     this.calculators.retirement.renderForm();
                 }
@@ -126,7 +145,6 @@ class FinanceApp {
                 if (!this.calculators.budget) {
                     this.calculators.budget = new BudgetCalculator(calculatorContent);
                 } else {
-                    calculatorContent.innerHTML = '';
                     this.calculators.budget.container = calculatorContent;
                     this.calculators.budget.renderForm();
                 }
@@ -137,7 +155,6 @@ class FinanceApp {
                 if (!this.calculators.tax) {
                     this.calculators.tax = new TaxCalculator(calculatorContent);
                 } else {
-                    calculatorContent.innerHTML = '';
                     this.calculators.tax.container = calculatorContent;
                     this.calculators.tax.renderForm();
                 }
@@ -162,20 +179,14 @@ class FinanceApp {
     }
 
     showHomePage() {
-        // Hide calculator container
         document.getElementById('calculator-container').style.display = 'none';
-        
-        // Show all page sections
         document.querySelectorAll('section').forEach(el => {
             el.style.display = 'block';
         });
-        
-        // Scroll to top
         window.scrollTo(0, 0);
     }
 }
 
-// Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     new FinanceApp();
 });
