@@ -62,12 +62,16 @@ class MortgageCalculator {
                 </button>
                 
                 <div id="mortgage-results" class="results-container" style="display: none;">
-                    <div class="results-header">
-                        <h3>Mortgage Analysis</h3>
-                        <button id="view-amortization" class="button card-button">
-                            <i class="fas fa-table"></i> View Amortization Schedule
-                        </button>
-                    </div>
+                <div class="results-header" style="text-align: center; margin-bottom: 30px;">
+    <div style="display: inline-flex; align-items: center; gap: 10px; color: var(--primary-color);">
+        <i class="fas fa-home" style="font-size: 1.5rem;"></i>
+        <h2 style="margin: 0; color: var(--dark-color); font-weight: 600;">Mortgage Analysis</h2>
+    </div>
+    <button id="view-amortization" class="button card-button" style="margin-top: 20px;">
+        <i class="fas fa-table"></i> View Amortization Schedule
+    </button>
+</div>
+
                     
                     <div class="results-grid">
                         <div class="result-item">
@@ -116,10 +120,14 @@ class MortgageCalculator {
                         <canvas id="mortgage-chart"></canvas>
                     </div>
                 </div>
-                
                 <div id="amortization-schedule" class="amortization-container" style="display: none;">
-                    <h3>Amortization Schedule</h3>
-                    <div class="table-container">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <div style="display: inline-flex; align-items: center; gap: 10px; color: var(--primary-color);">
+                            <i class="fas fa-table" style="font-size: 1.5rem;"></i>
+                            <h2 style="margin: 0; color: var(--dark-color); font-weight: 600;">Amortization Schedule</h2>
+                    </div>
+                </div>
+                       <div class="table-container">
                         <table>
                             <thead>
                                 <tr>
