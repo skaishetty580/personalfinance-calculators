@@ -62,23 +62,32 @@ class FinanceApp {
         const calculatorContent = document.querySelector('.calculator-content');
         container.style.display = 'block';
         
-        // Set calculator title
-        const titleMap = {
-        mortgage: { title: 'Mortgage Calculator', icon: 'fa-home' },
-        investment: { title: 'Investment Calculator', icon: 'fa-piggy-bank' },
-        debt: { title: 'Debt Payoff Calculator', icon: 'fa-credit-card' },
-        retirement: { title: 'Retirement Planner', icon: 'fa-umbrella-beach' },
-        budget: { title: 'Budget Analyzer', icon: 'fa-wallet' },
-        tax: { title: 'Tax Calculator', icon: 'fa-file-invoice-dollar' }
+      // Set calculator title and icon
+    const calculatorIcons = {
+        mortgage: 'fa-home',
+        investment: 'fa-piggy-bank',
+        debt: 'fa-credit-card',
+        retirement: 'fa-umbrella-beach',
+        budget: 'fa-wallet',
+        tax: 'fa-file-invoice-dollar'
     };
     
-    const calculatorInfo = titleMap[calculatorType] || { 
-        title: 'Calculator', 
-        icon: 'fa-calculator' 
+    const calculatorTitles = {
+        mortgage: 'Mortgage Calculator',
+        investment: 'Investment Calculator',
+        debt: 'Debt Payoff Calculator',
+        retirement: 'Retirement Planner',
+        budget: 'Budget Analyzer',
+        tax: 'Tax Calculator'
     };
     
-    document.getElementById('calculator-title').textContent = calculatorInfo.title;
-    document.getElementById('calculator-icon').innerHTML = `<i class="fas ${calculatorInfo.icon}"></i>`;
+    // Set the title
+    document.getElementById('calculator-title').textContent = 
+        calculatorTitles[calculatorType] || 'Calculator';
+    
+    // Set the icon
+    const iconElement = document.getElementById('calculator-icon');
+    iconElement.className = 'fas ' + (calculatorIcons[calculatorType] || 'fa-calculator');
         
         // Clear previous calculator
         calculatorContent.innerHTML = '';
