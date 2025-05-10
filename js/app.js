@@ -19,6 +19,7 @@ class FinanceApp {
     }
 
     loadChartJS() {
+        // Load Chart.js if not already loaded
         if (typeof Chart === 'undefined') {
             const script = document.createElement('script');
             script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
@@ -28,21 +29,16 @@ class FinanceApp {
     }
 
     setupCalculatorCards() {
-        // Handle clicks on the entire calculator card
         document.querySelectorAll('.calculator-card').forEach(card => {
             card.addEventListener('click', (e) => {
-                // Don't trigger if clicking directly on the button
                 if (e.target.classList.contains('card-button')) return;
-                
                 const calculatorType = card.dataset.calculator;
                 this.loadCalculator(calculatorType);
             });
         });
         
-        // Handle clicks specifically on the "Use Calculator" buttons
         document.querySelectorAll('.card-button').forEach(button => {
             button.addEventListener('click', (e) => {
-                e.stopPropagation(); // Prevent card click from triggering too
                 const calculatorType = e.target.closest('.calculator-card').dataset.calculator;
                 this.loadCalculator(calculatorType);
             });
@@ -56,8 +52,6 @@ class FinanceApp {
     }
 
     loadCalculator(calculatorType) {
-        console.log(`Loading calculator: ${calculatorType}`); // Debugging
-        
         // Hide all page sections
         document.querySelectorAll('section').forEach(el => {
             el.style.display = 'none';
@@ -68,48 +62,16 @@ class FinanceApp {
         const calculatorContent = document.querySelector('.calculator-content');
         container.style.display = 'block';
         
-        // Set calculator title and icon
-        const calculatorInfo = {
-            mortgage: {
-                title: 'Mortgage Calculator',
-                icon: 'fa-home',
-                color: '#4361ee'
-            },
-            investment: {
-                title: 'Investment Calculator',
-                icon: 'fa-piggy-bank',
-                color: '#43aa8b'
-            },
-            debt: {
-                title: 'Debt Payoff Calculator',
-                icon: 'fa-credit-card',
-                color: '#f72585'
-            },
-            retirement: {
-                title: 'Retirement Planner',
-                icon: 'fa-umbrella-beach',
-                color: '#f8961e'
-            },
-            budget: {
-                title: 'Budget Analyzer',
-                icon: 'fa-wallet',
-                color: '#4895ef'
-            },
-            tax: {
-                title: 'Tax Calculator',
-                icon: 'fa-file-invoice-dollar',
-                color: '#3a0ca3'
-            }
+        // Set calculator title
+        const titleMap = {
+            mortgage: 'Mortgage Calculator',
+            investment: 'Investment Calculator',
+            debt: 'Debt Payoff Calculator',
+            retirement: 'Retirement Planner',
+            budget: 'Budget Analyzer',
+            tax: 'Tax Calculator'
         };
-        
-        const currentInfo = calculatorInfo[calculatorType];
-        const calculatorIcon = document.getElementById('calculator-icon');
-        const calculatorTitle = document.getElementById('calculator-title');
-        
-        // Update title and icon
-        calculatorTitle.textContent = currentInfo.title;
-        calculatorIcon.className = 'fas ' + currentInfo.icon;
-        calculatorIcon.style.color = currentInfo.color;
+        document.getElementById('calculator-title').textContent = titleMap[calculatorType];
         
         // Clear previous calculator
         calculatorContent.innerHTML = '';
@@ -215,9 +177,5 @@ class FinanceApp {
 
 // Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    const financeApp = new FinanceApp();
-    
-    // For debugging - expose app to console
-    window.financeApp = financeApp;
-    console.log('FinanceApp initialized', financeApp);
+    new FinanceApp();
 });
