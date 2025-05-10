@@ -51,43 +51,58 @@ class FinanceApp {
     }
 
     loadCalculator(calculatorType) {
-        // Hide all page sections
-        document.querySelectorAll('section').forEach(el => {
-            el.style.display = 'none';
-        });
-        
-        // Show calculator container
-        const container = document.getElementById('calculator-container');
-        const calculatorContent = document.querySelector('.calculator-content');
-        container.style.display = 'block';
-        
-        // Set calculator title and icon
-        const calculatorInfo = {
-            mortgage: {
-                title: 'Mortgage Calculator',
-                icon: 'fa-home'
-            },
-            investment: {
-                title: 'Investment Calculator',
-                icon: 'fa-piggy-bank'
-            },
-            debt: {
-                title: 'Debt Payoff Calculator',
-                icon: 'fa-credit-card'
-            },
-            retirement: {
-                title: 'Retirement Planner',
-                icon: 'fa-umbrella-beach'
-            },
-            budget: {
-                title: 'Budget Analyzer',
-                icon: 'fa-wallet'
-            },
-            tax: {
-                title: 'Tax Calculator',
-                icon: 'fa-file-invoice-dollar'
-            }
-        };
+    // Hide all page sections
+    document.querySelectorAll('section').forEach(el => {
+        el.style.display = 'none';
+    });
+    
+    // Show calculator container
+    const container = document.getElementById('calculator-container');
+    const calculatorContent = document.querySelector('.calculator-content');
+    container.style.display = 'block';
+    
+    // Set calculator title and icon
+    const calculatorInfo = {
+        mortgage: {
+            title: 'Mortgage Calculator',
+            icon: 'fa-home'
+        },
+        investment: {
+            title: 'Investment Calculator',
+            icon: 'fa-piggy-bank'
+        },
+        debt: {
+            title: 'Debt Payoff Calculator',
+            icon: 'fa-credit-card'
+        },
+        retirement: {
+            title: 'Retirement Planner',
+            icon: 'fa-umbrella-beach'
+        },
+        budget: {
+            title: 'Budget Analyzer',
+            icon: 'fa-wallet'
+        },
+        tax: {
+            title: 'Tax Calculator',
+            icon: 'fa-file-invoice-dollar'
+        }
+    };
+    
+    const currentCalculator = calculatorInfo[calculatorType];
+    const calculatorIcon = document.getElementById('calculator-icon');
+    const calculatorTitle = document.getElementById('calculator-title');
+    
+    calculatorTitle.textContent = currentCalculator.title;
+    // Reset all classes and add the base + specific icon class
+    calculatorIcon.className = 'fas';
+    calculatorIcon.classList.add(currentCalculator.icon);
+    
+    // Clear previous calculator
+    calculatorContent.innerHTML = '';
+    
+    // Rest of your calculator loading logic...
+}
         
         const currentCalculator = calculatorInfo[calculatorType];
         const calculatorIcon = document.getElementById('calculator-icon');
