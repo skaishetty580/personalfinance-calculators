@@ -28,16 +28,21 @@ class FinanceApp {
     }
 
     setupCalculatorCards() {
+        // Handle clicks on the entire calculator card
         document.querySelectorAll('.calculator-card').forEach(card => {
             card.addEventListener('click', (e) => {
+                // Don't trigger if clicking directly on the button
                 if (e.target.classList.contains('card-button')) return;
+                
                 const calculatorType = card.dataset.calculator;
                 this.loadCalculator(calculatorType);
             });
         });
         
+        // Handle clicks specifically on the "Use Calculator" buttons
         document.querySelectorAll('.card-button').forEach(button => {
             button.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent card click from triggering too
                 const calculatorType = e.target.closest('.calculator-card').dataset.calculator;
                 this.loadCalculator(calculatorType);
             });
@@ -51,65 +56,60 @@ class FinanceApp {
     }
 
     loadCalculator(calculatorType) {
-    // Hide all page sections
-    document.querySelectorAll('section').forEach(el => {
-        el.style.display = 'none';
-    });
-    
-    // Show calculator container
-    const container = document.getElementById('calculator-container');
-    const calculatorContent = document.querySelector('.calculator-content');
-    container.style.display = 'block';
-    
-    // Set calculator title and icon
-    const calculatorInfo = {
-        mortgage: {
-            title: 'Mortgage Calculator',
-            icon: 'fa-home'
-        },
-        investment: {
-            title: 'Investment Calculator',
-            icon: 'fa-piggy-bank'
-        },
-        debt: {
-            title: 'Debt Payoff Calculator',
-            icon: 'fa-credit-card'
-        },
-        retirement: {
-            title: 'Retirement Planner',
-            icon: 'fa-umbrella-beach'
-        },
-        budget: {
-            title: 'Budget Analyzer',
-            icon: 'fa-wallet'
-        },
-        tax: {
-            title: 'Tax Calculator',
-            icon: 'fa-file-invoice-dollar'
-        }
-    };
-    
-    const currentCalculator = calculatorInfo[calculatorType];
-    const calculatorIcon = document.getElementById('calculator-icon');
-    const calculatorTitle = document.getElementById('calculator-title');
-    
-    calculatorTitle.textContent = currentCalculator.title;
-    // Reset all classes and add the base + specific icon class
-    calculatorIcon.className = 'fas';
-    calculatorIcon.classList.add(currentCalculator.icon);
-    
-    // Clear previous calculator
-    calculatorContent.innerHTML = '';
-    
-    // Rest of your calculator loading logic...
-}
+        console.log(`Loading calculator: ${calculatorType}`); // Debugging
         
-        const currentCalculator = calculatorInfo[calculatorType];
+        // Hide all page sections
+        document.querySelectorAll('section').forEach(el => {
+            el.style.display = 'none';
+        });
+        
+        // Show calculator container
+        const container = document.getElementById('calculator-container');
+        const calculatorContent = document.querySelector('.calculator-content');
+        container.style.display = 'block';
+        
+        // Set calculator title and icon
+        const calculatorInfo = {
+            mortgage: {
+                title: 'Mortgage Calculator',
+                icon: 'fa-home',
+                color: '#4361ee'
+            },
+            investment: {
+                title: 'Investment Calculator',
+                icon: 'fa-piggy-bank',
+                color: '#43aa8b'
+            },
+            debt: {
+                title: 'Debt Payoff Calculator',
+                icon: 'fa-credit-card',
+                color: '#f72585'
+            },
+            retirement: {
+                title: 'Retirement Planner',
+                icon: 'fa-umbrella-beach',
+                color: '#f8961e'
+            },
+            budget: {
+                title: 'Budget Analyzer',
+                icon: 'fa-wallet',
+                color: '#4895ef'
+            },
+            tax: {
+                title: 'Tax Calculator',
+                icon: 'fa-file-invoice-dollar',
+                color: '#3a0ca3'
+            }
+        };
+        
+        const currentInfo = calculatorInfo[calculatorType];
         const calculatorIcon = document.getElementById('calculator-icon');
         const calculatorTitle = document.getElementById('calculator-title');
         
-        calculatorTitle.textContent = currentCalculator.title;
-        calculatorIcon.className = `fas ${currentCalculator.icon}`;
+        // Update title and icon
+        calculatorTitle.textContent = currentInfo.title;
+        calculatorIcon.className = 'fas ' + currentInfo.icon;
+        calculatorIcon.style.color = currentInfo.color;
         
         // Clear previous calculator
         calculatorContent.innerHTML = '';
@@ -120,6 +120,7 @@ class FinanceApp {
                 if (!this.calculators.mortgage) {
                     this.calculators.mortgage = new MortgageCalculator(calculatorContent);
                 } else {
+                    calculatorContent.innerHTML = '';
                     this.calculators.mortgage.container = calculatorContent;
                     this.calculators.mortgage.renderForm();
                 }
@@ -130,6 +131,7 @@ class FinanceApp {
                 if (!this.calculators.investment) {
                     this.calculators.investment = new InvestmentCalculator(calculatorContent);
                 } else {
+                    calculatorContent.innerHTML = '';
                     this.calculators.investment.container = calculatorContent;
                     this.calculators.investment.renderForm();
                 }
@@ -140,6 +142,7 @@ class FinanceApp {
                 if (!this.calculators.debt) {
                     this.calculators.debt = new DebtCalculator(calculatorContent);
                 } else {
+                    calculatorContent.innerHTML = '';
                     this.calculators.debt.container = calculatorContent;
                     this.calculators.debt.renderForm();
                 }
@@ -150,6 +153,7 @@ class FinanceApp {
                 if (!this.calculators.retirement) {
                     this.calculators.retirement = new RetirementCalculator(calculatorContent);
                 } else {
+                    calculatorContent.innerHTML = '';
                     this.calculators.retirement.container = calculatorContent;
                     this.calculators.retirement.renderForm();
                 }
@@ -160,6 +164,7 @@ class FinanceApp {
                 if (!this.calculators.budget) {
                     this.calculators.budget = new BudgetCalculator(calculatorContent);
                 } else {
+                    calculatorContent.innerHTML = '';
                     this.calculators.budget.container = calculatorContent;
                     this.calculators.budget.renderForm();
                 }
@@ -170,6 +175,7 @@ class FinanceApp {
                 if (!this.calculators.tax) {
                     this.calculators.tax = new TaxCalculator(calculatorContent);
                 } else {
+                    calculatorContent.innerHTML = '';
                     this.calculators.tax.container = calculatorContent;
                     this.calculators.tax.renderForm();
                 }
@@ -194,14 +200,24 @@ class FinanceApp {
     }
 
     showHomePage() {
+        // Hide calculator container
         document.getElementById('calculator-container').style.display = 'none';
+        
+        // Show all page sections
         document.querySelectorAll('section').forEach(el => {
             el.style.display = 'block';
         });
+        
+        // Scroll to top
         window.scrollTo(0, 0);
     }
 }
 
+// Initialize the application when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new FinanceApp();
+    const financeApp = new FinanceApp();
+    
+    // For debugging - expose app to console
+    window.financeApp = financeApp;
+    console.log('FinanceApp initialized', financeApp);
 });
