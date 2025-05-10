@@ -1,6 +1,7 @@
 class MortgageCalculator {
     constructor(container) {
         this.container = container;
+        this.chart = null;
         this.renderForm();
         this.setupEventListeners();
     }
@@ -62,16 +63,17 @@ class MortgageCalculator {
                 </button>
                 
                 <div id="mortgage-results" class="results-container" style="display: none;">
-                <div class="results-header" style="text-align: center; margin-bottom: 30px;">
-    <div style="display: inline-flex; align-items: center; gap: 10px; color: var(--primary-color);">
-        <i class="fas fa-home" style="font-size: 1.5rem;"></i>
-        <h2 style="margin: 0; color: var(--dark-color); font-weight: 600;">Mortgage Analysis</h2>
-    </div>
-    <button id="view-amortization" class="button card-button" style="margin-top: 20px;">
-        <i class="fas fa-table"></i> View Amortization Schedule
-    </button>
-</div>
-
+                    <div class="results-header">
+                        <div class="calculator-title-container">
+                            <div class="calculator-title">
+                                <i class="fas fa-home"></i>
+                                <h2>Mortgage Analysis</h2>
+                            </div>
+                        </div>
+                        <button id="view-amortization" class="button card-button">
+                            <i class="fas fa-table"></i> View Amortization Schedule
+                        </button>
+                    </div>
                     
                     <div class="results-grid">
                         <div class="result-item">
@@ -120,14 +122,17 @@ class MortgageCalculator {
                         <canvas id="mortgage-chart"></canvas>
                     </div>
                 </div>
+                
                 <div id="amortization-schedule" class="amortization-container" style="display: none;">
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <div style="display: inline-flex; align-items: center; gap: 10px; color: var(--primary-color);">
-                            <i class="fas fa-table" style="font-size: 1.5rem;"></i>
-                            <h2 style="margin: 0; color: var(--dark-color); font-weight: 600;">Amortization Schedule</h2>
+                    <div class="amortization-header">
+                        <div class="calculator-title-container">
+                            <div class="calculator-title">
+                                <i class="fas fa-table"></i>
+                                <h2>Amortization Schedule</h2>
+                            </div>
+                        </div>
                     </div>
-                </div>
-                       <div class="table-container">
+                    <div class="table-container">
                         <table>
                             <thead>
                                 <tr>
@@ -150,6 +155,43 @@ class MortgageCalculator {
                 </div>
             </div>
         `;
+
+        // Add dynamic styles
+        this.addStyles();
+    }
+
+    addStyles() {
+        const style = document.createElement('style');
+        style.textContent = `
+            .calculator-title-container {
+                text-align: center;
+                margin-bottom: 25px;
+            }
+            .calculator-title {
+                display: inline-flex;
+                align-items: center;
+                gap: 12px;
+                color: var(--primary-color);
+            }
+            .calculator-title h2 {
+                margin: 0;
+                color: var(--dark-color);
+                font-weight: 600;
+                font-size: 1.8rem;
+            }
+            .calculator-title i {
+                font-size: 1.8rem;
+            }
+            .results-header {
+                text-align: center;
+                margin-bottom: 30px;
+            }
+            .amortization-header {
+                text-align: center;
+                margin-bottom: 25px;
+            }
+        `;
+        document.head.appendChild(style);
     }
 
     calculate() {
