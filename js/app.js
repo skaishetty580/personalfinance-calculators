@@ -64,14 +64,21 @@ class FinanceApp {
         
         // Set calculator title
         const titleMap = {
-            mortgage: 'Mortgage Calculator',
-            investment: 'Investment Calculator',
-            debt: 'Debt Payoff Calculator',
-            retirement: 'Retirement Planner',
-            budget: 'Budget Analyzer',
-            tax: 'Tax Calculator'
-        };
-        document.getElementById('calculator-title').textContent = titleMap[calculatorType];
+        mortgage: { title: 'Mortgage Calculator', icon: 'fa-home' },
+        investment: { title: 'Investment Calculator', icon: 'fa-piggy-bank' },
+        debt: { title: 'Debt Payoff Calculator', icon: 'fa-credit-card' },
+        retirement: { title: 'Retirement Planner', icon: 'fa-umbrella-beach' },
+        budget: { title: 'Budget Analyzer', icon: 'fa-wallet' },
+        tax: { title: 'Tax Calculator', icon: 'fa-file-invoice-dollar' }
+    };
+    
+    const calculatorInfo = titleMap[calculatorType] || { 
+        title: 'Calculator', 
+        icon: 'fa-calculator' 
+    };
+    
+    document.getElementById('calculator-title').textContent = calculatorInfo.title;
+    document.getElementById('calculator-icon').innerHTML = `<i class="fas ${calculatorInfo.icon}"></i>`;
         
         // Clear previous calculator
         calculatorContent.innerHTML = '';
