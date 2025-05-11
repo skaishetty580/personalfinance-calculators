@@ -78,9 +78,8 @@ const calculatorIcon = document.getElementById('calculator-icon');
 const calculatorTitle = document.getElementById('calculator-title');
 
 calculatorIcon.className = `fas ${calculatorInfo[calculatorType].icon}`;
-        calculatorIcon.style.color = '#4361ee'; // Force color change
 calculatorTitle.textContent = calculatorInfo[calculatorType].title;
-    
+calculatorIcon.style.color = '#4361ee'; // Force color change    
         // Clear previous calculator
         calculatorContent.innerHTML = '';
         
