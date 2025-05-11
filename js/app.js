@@ -64,7 +64,8 @@ class FinanceApp {
         
       // Set calculator title and icon
    // Set calculator title with icon
-const titleMap = {
+// Set calculator title and icon
+const calculatorInfo = {
     mortgage: { title: 'Mortgage Calculator', icon: 'fa-home' },
     investment: { title: 'Investment Calculator', icon: 'fa-chart-line' },
     debt: { title: 'Debt Payoff Calculator', icon: 'fa-credit-card' },
@@ -73,8 +74,11 @@ const titleMap = {
     tax: { title: 'Tax Calculator', icon: 'fa-file-invoice-dollar' }
 };
 
+const calculatorIcon = document.getElementById('calculator-icon');
 const calculatorTitle = document.getElementById('calculator-title');
-calculatorTitle.innerHTML = `<i class="fas ${titleMap[calculatorType].icon}"></i> ${titleMap[calculatorType].title}`;
+
+calculatorIcon.className = `fas ${calculatorInfo[calculatorType].icon}`;
+calculatorTitle.textContent = calculatorInfo[calculatorType].title;
     
         // Clear previous calculator
         calculatorContent.innerHTML = '';
