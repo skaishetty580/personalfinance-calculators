@@ -274,6 +274,11 @@ ul {
     font-size: 2rem;
     color: var(--primary-color);
 }
+/* If you want to make the title larger */
+#calculator-title {
+    font-size: 1.8rem;
+    margin: 0;
+}
 .title-wrapper {
     display: flex;
     align-items: center;
