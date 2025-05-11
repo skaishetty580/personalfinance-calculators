@@ -280,10 +280,11 @@ ul {
     justify-content: center;
 }
 
+/* Add this to your existing CSS */
 #calculator-icon {
+    color: var(--primary-color); /* Uses your existing blue color variable */
     font-size: 1.8rem;
 }
-
 #calculator-title {
     font-size: 1.8rem;
     margin: 0;
