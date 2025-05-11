@@ -278,7 +278,7 @@ ul {
 }
 
 #calculator-icon {
-    font-size: 2.0rem; /* Increased from 1.8rem */
+    font-size: 1.8rem; /* Increased from 1.8rem */
     color: var(--primary-color); /* Blue color from your palette */
     line-height: 1; /* Ensures proper vertical alignment */
     margin-right: 06px; /* Space between icon and title */
