@@ -263,50 +263,53 @@ ul {
 }
 
 /* Calculator Form Styles */
+/* Calculator Header Styles */
 .calculator-header {
     display: flex;
     align-items: center;
-    gap: 20px;
+    justify-content: space-between;
     margin-bottom: 30px;
-    flex-wrap: wrap;
+    gap: 20px;
 }
-.calculator-header i {
-    font-size: 2rem;
-    color: var(--primary-color);
-}
-/* If you want to make the title larger */
-#calculator-title {
-    font-size: 1.8rem;
-    margin: 0;
-}
+
 .title-wrapper {
     display: flex;
     align-items: center;
-    gap: 10px; /* Increased gap for better spacing */
+    gap: 15px;
+    flex-grow: 1;
+    justify-content: center;
 }
 
 #calculator-icon {
-    font-size: 1.8rem; /* Increased from 1.8rem */
-    color: var(--primary-color); /* Blue color from your palette */
-    line-height: 1; /* Ensures proper vertical alignment */
-    margin-right: 02px; /* Space between icon and title */
+    font-size: 1.8rem;
 }
+
 #calculator-title {
-    display: inline;
+    font-size: 1.8rem;
     margin: 0;
-    vertical-align: middle;
-    font-size: 1.8rem; /* Match this to your desired title size */
+    color: var(--dark-color);
 }
-@media (max-width: 576px) {
+
+.back-button {
+    order: -1; /* Ensures back button stays on the left */
+    margin-right: auto; /* Pushes title to center */
+}
+
+/* For mobile responsiveness */
+@media (max-width: 768px) {
     .calculator-header {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-wrap: wrap;
     }
     
     .title-wrapper {
+        order: 1;
         width: 100%;
-        justify-content: flex-start;
-        margin-top: 10px;
+        justify-content: center;
+        margin-top: 15px;
+    }
+    
+    .back-button {
+        order: 0;
     }
 }
 .calculator-form {
