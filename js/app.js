@@ -89,7 +89,7 @@ class FinanceApp {
     const iconElement = document.getElementById('calculator-icon');
     iconElement.className = 'fas ' + (calculatorIcons[calculatorType] || 'fa-calculator');
      iconElement.style.cssText = `
-    font-size: 2.0rem;
+    font-size: 1.8rem;
     color: #4361ee;
     line-height: 1;
     margin-right: 10px;
