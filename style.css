@@ -270,7 +270,10 @@ ul {
     margin-bottom: 30px;
     flex-wrap: wrap;
 }
-
+.calculator-header i {
+    font-size: 2rem;
+    color: var(--primary-color);
+}
 .title-wrapper {
     display: flex;
     align-items: center;
