@@ -63,37 +63,18 @@ class FinanceApp {
         container.style.display = 'block';
         
       // Set calculator title and icon
-    const calculatorIcons = {
-        mortgage: 'fa-home',
-        investment: 'fa-piggy-bank',
-        debt: 'fa-credit-card',
-        retirement: 'fa-umbrella-beach',
-        budget: 'fa-wallet',
-        tax: 'fa-file-invoice-dollar'
-    };
-    
-    const calculatorTitles = {
-        mortgage: 'Mortgage Calculator',
-        investment: 'Investment Calculator',
-        debt: 'Debt Payoff Calculator',
-        retirement: 'Retirement Planner',
-        budget: 'Budget Analyzer',
-        tax: 'Tax Calculator'
-    };
-    
-    // Set the title
-    document.getElementById('calculator-title').textContent = 
-        calculatorTitles[calculatorType] || 'Calculator';
-    
-    // Set the icon
-    const iconElement = document.getElementById('calculator-icon');
-    iconElement.className = 'fas ' + (calculatorIcons[calculatorType] || 'fa-calculator');
-     iconElement.style.cssText = `
-    font-size: 1.8rem;
-    color: #4361ee;
-    line-height: 1;
-    margin-right: 10px;
-`;   
+   // Set calculator title with icon
+const titleMap = {
+    mortgage: { title: 'Mortgage Calculator', icon: 'fa-home' },
+    investment: { title: 'Investment Calculator', icon: 'fa-chart-line' },
+    debt: { title: 'Debt Payoff Calculator', icon: 'fa-credit-card' },
+    retirement: { title: 'Retirement Planner', icon: 'fa-piggy-bank' },
+    budget: { title: 'Budget Analyzer', icon: 'fa-wallet' },
+    tax: { title: 'Tax Calculator', icon: 'fa-file-invoice-dollar' }
+};
+
+const calculatorTitle = document.getElementById('calculator-title');
+calculatorTitle.innerHTML = `<i class="fas ${titleMap[calculatorType].icon}"></i> ${titleMap[calculatorType].title}`;
     
         // Clear previous calculator
         calculatorContent.innerHTML = '';
