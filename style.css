@@ -272,12 +272,10 @@ ul {
     gap: 20px;
 }
 
-.title-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    flex-grow: 1;
-    justify-content: center;
+.title-wrapper #calculator-icon {
+    color: var(--primary-color);
+    font-size: 1.8rem;
+    margin-right: 10px;
 }
 
 /* Add this to your existing CSS */
