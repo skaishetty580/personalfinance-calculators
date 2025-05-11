@@ -87,7 +87,7 @@ class FinanceApp {
     
     // Set the icon
     const iconElement = document.getElementById('calculator-icon');
-    iconElement.className = 'fas ' + (calculatorIcons[calculatorType] || 'fa-calculator');
+    iconElement.className = 'fas' + (calculatorIcons[calculatorType] || 'fa-calculator');
     
         // Clear previous calculator
         calculatorContent.innerHTML = '';
