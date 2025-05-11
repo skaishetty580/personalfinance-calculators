@@ -274,7 +274,7 @@ ul {
 .title-wrapper {
     display: flex;
     align-items: center;
-    gap: 10px; /* Increased gap for better spacing */
+    gap: 15px; /* Increased gap for better spacing */
 }
 
 #calculator-icon {
