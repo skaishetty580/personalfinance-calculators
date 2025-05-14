@@ -178,54 +178,59 @@ class InvestmentCalculator {
             const taxRate = this.parseInputValue('tax-rate') || 20;
             const compoundFrequency = parseInt(document.getElementById('compound-frequency').value) || 12;
             
-            // Calculate compound interest with regular contributions
+            // Calculate periodic values
             const periodicRate = expectedReturn / 100 / compoundFrequency;
-            const periods = years * compoundFrequency;
+            const totalPeriods = years * compoundFrequency;
             const periodicContribution = monthlyContribution * (12 / compoundFrequency);
             
-            // Future value of initial investment
-            let futureValue = initialInvestment * Math.pow(1 + periodicRate, periods);
+            // Calculate future value using compound interest formula with regular contributions
+            let futureValue = initialInvestment * Math.pow(1 + periodicRate, totalPeriods);
             
-            // Future value of contributions (annuity formula)
             if (periodicContribution > 0) {
-                futureValue += periodicContribution * (Math.pow(1 + periodicRate, periods) - 1) / periodicRate;
+                futureValue += periodicContribution * (Math.pow(1 + periodicRate, totalPeriods) - 1) / periodicRate;
             }
             
             // Calculate yearly breakdown
             const yearlyData = [];
             let balance = initialInvestment;
+            let totalContributions = initialInvestment;
             
             for (let year = 1; year <= years; year++) {
                 const startingBalance = balance;
+                let yearlyInterest = 0;
                 let yearlyContributions = 0;
                 
+                // Calculate for each compounding period in the year
                 for (let period = 1; period <= compoundFrequency; period++) {
-                    balance += periodicContribution;
-                    yearlyContributions += periodicContribution;
-                    balance *= (1 + periodicRate);
+                    const contribution = periodicContribution;
+                    yearlyContributions += contribution;
+                    totalContributions += contribution;
+                    
+                    const periodInterest = balance * periodicRate;
+                    yearlyInterest += periodInterest;
+                    
+                    balance += contribution + periodInterest;
                 }
                 
-                const interestEarned = balance - startingBalance - yearlyContributions;
                 yearlyData.push({
                     year,
                     startingBalance,
                     contributions: yearlyContributions,
-                    interest: interestEarned,
+                    interest: yearlyInterest,
                     endingBalance: balance
                 });
             }
             
             // Calculate summary values
-            const totalContributions = initialInvestment + (monthlyContribution * 12 * years);
-            const interestEarned = futureValue - totalContributions;
+            const totalInterest = futureValue - totalContributions;
             const inflationAdjusted = futureValue / Math.pow(1 + (inflationRate / 100), years);
-            const afterTaxes = futureValue - (interestEarned * (taxRate / 100));
+            const afterTaxes = futureValue - (totalInterest * (taxRate / 100));
             
             // Display results
             this.displayResults({
                 initialInvestment,
                 totalContributions,
-                interestEarned,
+                totalInterest,
                 futureValue,
                 inflationAdjusted,
                 afterTaxes
@@ -235,7 +240,7 @@ class InvestmentCalculator {
             this.generatePerformanceTable(yearlyData);
             
             // Generate chart
-            this.generateChart(initialInvestment, totalContributions - initialInvestment, interestEarned);
+            this.generateChart(initialInvestment, totalContributions - initialInvestment, totalInterest);
             
             // Show results
             document.getElementById('investment-results').style.display = 'block';
@@ -248,11 +253,11 @@ class InvestmentCalculator {
     }
 
     displayResults(results) {
-        const formatCurrency = (value) => `$${value.toLocaleString('en-US', {maximumFractionDigits: 0})}`;
+        const formatCurrency = (value) => `$${value.toLocaleString('en-US', {maximumFractionDigits: 2})}`;
         
         document.getElementById('initial-investment-result').textContent = formatCurrency(results.initialInvestment);
         document.getElementById('total-contributions').textContent = formatCurrency(results.totalContributions);
-        document.getElementById('interest-earned').textContent = formatCurrency(results.interestEarned);
+        document.getElementById('interest-earned').textContent = formatCurrency(results.totalInterest);
         document.getElementById('final-balance').textContent = formatCurrency(results.futureValue);
         document.getElementById('inflation-adjusted').textContent = formatCurrency(results.inflationAdjusted);
         document.getElementById('after-taxes').textContent = formatCurrency(results.afterTaxes);
@@ -268,10 +273,10 @@ class InvestmentCalculator {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>${item.year}</td>
-                <td>$${item.startingBalance.toLocaleString('en-US', {maximumFractionDigits: 0})}</td>
-                <td>$${item.contributions.toLocaleString('en-US', {maximumFractionDigits: 0})}</td>
-                <td>$${item.interest.toLocaleString('en-US', {maximumFractionDigits: 0})}</td>
-                <td>$${item.endingBalance.toLocaleString('en-US', {maximumFractionDigits: 0})}</td>
+                <td>$${item.startingBalance.toLocaleString('en-US', {maximumFractionDigits: 2})}</td>
+                <td>$${item.contributions.toLocaleString('en-US', {maximumFractionDigits: 2})}</td>
+                <td>$${item.interest.toLocaleString('en-US', {maximumFractionDigits: 2})}</td>
+                <td>$${item.endingBalance.toLocaleString('en-US', {maximumFractionDigits: 2})}</td>
             `;
             fragment.appendChild(row);
         });
