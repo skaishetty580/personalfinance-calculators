@@ -85,11 +85,11 @@ class InvestmentCalculator {
                             <h4>Final Balance</h4>
                             <p id="final-balance">$0.00</p>
                         </div>
-                        <div class="result-item">
+                        <div class="result-item inflation-adjusted-item" style="display: none;">
                             <h4>Inflation Adjusted</h4>
                             <p id="inflation-adjusted">$0.00</p>
                         </div>
-                        <div class="result-item">
+                        <div class="result-item after-taxes-item" style="display: none;">
                             <h4>After Taxes</h4>
                             <p id="after-taxes">$0.00</p>
                         </div>
@@ -110,8 +110,8 @@ class InvestmentCalculator {
                                         <th>Contributions</th>
                                         <th>Interest</th>
                                         <th>Ending Balance</th>
-                                        <th>Inflation Adjusted</th>
-                                        <th>After Taxes</th>
+                                        <th class="inflation-adjusted-column" style="display: none;">Inflation Adjusted</th>
+                                        <th class="after-taxes-column" style="display: none;">After Taxes</th>
                                     </tr>
                                 </thead>
                                 <tbody id="performance-body">
@@ -181,6 +181,15 @@ class InvestmentCalculator {
             const taxRate = this.parseInputValue('tax-rate');
             const compoundFrequency = parseInt(document.getElementById('compound-frequency').value);
             
+            // Show/hide inflation and tax results based on input
+            const showInflationAdjusted = inflationRate > 0;
+            const showAfterTaxes = taxRate > 0;
+            
+            document.querySelector('.inflation-adjusted-item').style.display = showInflationAdjusted ? 'block' : 'none';
+            document.querySelector('.after-taxes-item').style.display = showAfterTaxes ? 'block' : 'none';
+            document.querySelector('.inflation-adjusted-column').style.display = showInflationAdjusted ? 'table-cell' : 'none';
+            document.querySelector('.after-taxes-column').style.display = showAfterTaxes ? 'table-cell' : 'none';
+            
             // Calculate periodic values
             const periodicRate = expectedReturn / 100 / compoundFrequency;
             const totalPeriods = years * compoundFrequency;
@@ -217,9 +226,9 @@ class InvestmentCalculator {
                 
                 totalInterest += yearlyInterest;
                 
-                // Calculate inflation-adjusted and after-tax values
-                const inflationAdjusted = balance / Math.pow(1 + (inflationRate / 100), year);
-                const afterTaxes = startingBalance + yearlyContributions + (yearlyInterest * (1 - taxRate / 100));
+                // Calculate conditional values
+                const inflationAdjusted = showInflationAdjusted ? balance / Math.pow(1 + (inflationRate / 100), year) : 0;
+                const afterTaxes = showAfterTaxes ? startingBalance + yearlyContributions + (yearlyInterest * (1 - taxRate / 100)) : 0;
                 
                 this.yearlyData.push({
                     year,
@@ -236,10 +245,8 @@ class InvestmentCalculator {
             totalInterest = futureValue - totalContributions;
             
             // Calculate summary values
-            const inflationAdjusted = futureValue / Math.pow(1 + (inflationRate / 100), years);
-            const afterTaxes = initialInvestment + 
-                             (totalContributions - initialInvestment) + 
-                             (totalInterest * (1 - taxRate / 100));
+            const inflationAdjusted = showInflationAdjusted ? futureValue / Math.pow(1 + (inflationRate / 100), years) : 0;
+            const afterTaxes = showAfterTaxes ? initialInvestment + (totalContributions - initialInvestment) + (totalInterest * (1 - taxRate / 100)) : 0;
             
             // Display results
             this.displayResults({
@@ -248,11 +255,13 @@ class InvestmentCalculator {
                 totalInterest,
                 futureValue,
                 inflationAdjusted,
-                afterTaxes
+                afterTaxes,
+                showInflationAdjusted,
+                showAfterTaxes
             });
             
             // Generate performance table
-            this.generatePerformanceTable();
+            this.generatePerformanceTable(showInflationAdjusted, showAfterTaxes);
             
             // Generate chart
             this.generateChart(initialInvestment, totalContributions - initialInvestment, totalInterest);
@@ -274,11 +283,17 @@ class InvestmentCalculator {
         document.getElementById('total-contributions').textContent = formatCurrency(results.totalContributions);
         document.getElementById('interest-earned').textContent = formatCurrency(results.totalInterest);
         document.getElementById('final-balance').textContent = formatCurrency(results.futureValue);
-        document.getElementById('inflation-adjusted').textContent = formatCurrency(results.inflationAdjusted);
-        document.getElementById('after-taxes').textContent = formatCurrency(results.afterTaxes);
+        
+        if (results.showInflationAdjusted) {
+            document.getElementById('inflation-adjusted').textContent = formatCurrency(results.inflationAdjusted);
+        }
+        
+        if (results.showAfterTaxes) {
+            document.getElementById('after-taxes').textContent = formatCurrency(results.afterTaxes);
+        }
     }
 
-    generatePerformanceTable() {
+    generatePerformanceTable(showInflationAdjusted, showAfterTaxes) {
         const performanceBody = document.getElementById('performance-body');
         performanceBody.innerHTML = '';
         
@@ -292,8 +307,8 @@ class InvestmentCalculator {
                 <td>${this.formatCurrency(item.contributions)}</td>
                 <td>${this.formatCurrency(item.interest)}</td>
                 <td>${this.formatCurrency(item.endingBalance)}</td>
-                <td>${this.formatCurrency(item.inflationAdjusted)}</td>
-                <td>${this.formatCurrency(item.afterTaxes)}</td>
+                ${showInflationAdjusted ? `<td>${this.formatCurrency(item.inflationAdjusted)}</td>` : ''}
+                ${showAfterTaxes ? `<td>${this.formatCurrency(item.afterTaxes)}</td>` : ''}
             `;
             fragment.appendChild(row);
         });
