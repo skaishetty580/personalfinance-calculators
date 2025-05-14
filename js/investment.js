@@ -32,17 +32,6 @@ class InvestmentCalculator {
                     </div>
                 </div>
 
-                <div class="input-row">
-                    <div class="input-group">
-                        <label for="inflation-rate">Inflation Rate (%)</label>
-                        <input type="number" id="inflation-rate" placeholder="0" step="0.01" min="0" max="20" value="0">
-                    </div>
-                    <div class="input-group">
-                        <label for="tax-rate">Tax Rate (%)</label>
-                        <input type="number" id="tax-rate" placeholder="0" step="0.01" min="0" max="100" value="0">
-                    </div>
-                </div>
-
                 <div class="input-group">
                     <label for="compound-frequency">Compound Frequency</label>
                     <select id="compound-frequency">
@@ -55,14 +44,14 @@ class InvestmentCalculator {
                 </div>
 
                 <button id="calculate-investment" class="button cta-button">
-                    <i class="fas fa-chart-line"></i> Calculate Investment Growth
+                    Calculate Investment Growth
                 </button>
 
                 <div id="investment-results" class="results-container" style="display: none;">
                     <div class="results-header">
                         <h3>Investment Projection</h3>
                         <button id="view-performance" class="button card-button">
-                            <i class="fas fa-table"></i> View Performance Table
+                            View Performance Table
                         </button>
                     </div>
 
@@ -107,7 +96,7 @@ class InvestmentCalculator {
                             </table>
                         </div>
                         <button id="back-to-results" class="button back-button">
-                            <i class="fas fa-arrow-left"></i> Back to Results
+                            Back to Results
                         </button>
                     </div>
                 </div>
