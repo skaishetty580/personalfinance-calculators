@@ -1,6 +1,7 @@
 class RetirementCalculator {
     constructor(container) {
         this.container = container;
+        this.chart = null;
         this.renderForm();
         this.setupEventListeners();
     }
@@ -120,130 +121,180 @@ class RetirementCalculator {
     }
 
     calculate() {
-        // Get input values
-        const currentAge = parseInt(document.getElementById('current-age').value) || 35;
-        const retirementAge = parseInt(document.getElementById('retirement-age').value) || 65;
-        const currentSavings = parseFloat(document.getElementById('current-savings').value) || 100000;
-        const monthlyContribution = parseFloat(document.getElementById('monthly-contribution').value) || 1000;
-        const annualReturn = parseFloat(document.getElementById('annual-return').value) || 7;
-        const retirementReturn = parseFloat(document.getElementById('retirement-return').value) || 5;
-        const inflationRate = parseFloat(document.getElementById('inflation-rate').value) || 2.5;
-        const retirementYears = parseInt(document.getElementById('retirement-years').value) || 30;
-        const monthlyIncome = parseFloat(document.getElementById('monthly-income').value) || 5000;
+        // Show loading state
+        const calculateBtn = this.container.querySelector('#calculate-retirement');
+        calculateBtn.disabled = true;
+        calculateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculating...';
         
-        // Calculate working years and retirement years
-        const workingYears = retirementAge - currentAge;
-        const totalYears = workingYears + retirementYears;
-        
-        // Calculate retirement savings at retirement age
-        let savings = currentSavings;
-        const workingProjection = [];
-        const monthlyRate = annualReturn / 100 / 12;
-        const months = workingYears * 12;
-        
-        for (let i = 0; i < months; i++) {
-            const interest = savings * monthlyRate;
-            savings += interest + monthlyContribution;
-            
-            // Record yearly values
-            if (i % 12 === 11) {
-                const year = Math.floor(i / 12) + 1;
-                workingProjection.push({
-                    age: currentAge + year,
-                    year,
-                    balance: savings,
-                    contributions: monthlyContribution * 12,
-                    interest,
-                    withdrawals: 0
-                });
-            }
-        }
-        
-        const retirementSavings = savings;
-        const totalContributions = currentSavings + (monthlyContribution * months);
-        const interestEarned = retirementSavings - totalContributions;
-        
-        // Calculate retirement withdrawals
-        let retirementBalance = retirementSavings;
-        const retirementProjection = [];
-        const retirementMonthlyRate = retirementReturn / 100 / 12;
-        const retirementMonths = retirementYears * 12;
-        let annualIncome = monthlyIncome * 12;
-        let totalWithdrawals = 0;
-        let savingsDepleted = false;
-        
-        for (let i = 0; i < retirementMonths; i++) {
-            // Adjust income for inflation
-            if (i % 12 === 0 && i > 0) {
-                annualIncome *= (1 + (inflationRate / 100));
-            }
-            
-            const monthlyWithdrawal = annualIncome / 12;
-            const interest = retirementBalance * retirementMonthlyRate;
-            retirementBalance += interest - monthlyWithdrawal;
-            totalWithdrawals += monthlyWithdrawal;
-            
-            if (retirementBalance <= 0) {
-                retirementBalance = 0;
-                savingsDepleted = true;
-            }
-            
-            // Record yearly values
-            if (i % 12 === 11 || retirementBalance <= 0) {
-                const year = workingYears + Math.floor(i / 12) + 1;
-                retirementProjection.push({
-                    age: currentAge + year,
-                    year,
-                    balance: retirementBalance,
-                    contributions: 0,
-                    interest,
-                    withdrawals: monthlyWithdrawal * 12
-                });
+        // Use setTimeout to allow UI to update before heavy calculations
+        setTimeout(() => {
+            try {
+                // Get input values
+                const currentAge = parseInt(this.container.querySelector('#current-age').value) || 35;
+                const retirementAge = parseInt(this.container.querySelector('#retirement-age').value) || 65;
+                const currentSavings = parseFloat(this.container.querySelector('#current-savings').value) || 100000;
+                const monthlyContribution = parseFloat(this.container.querySelector('#monthly-contribution').value) || 1000;
+                const annualReturn = parseFloat(this.container.querySelector('#annual-return').value) || 7;
+                const retirementReturn = parseFloat(this.container.querySelector('#retirement-return').value) || 5;
+                const inflationRate = parseFloat(this.container.querySelector('#inflation-rate').value) || 2.5;
+                const retirementYears = parseInt(this.container.querySelector('#retirement-years').value) || 30;
+                const monthlyIncome = parseFloat(this.container.querySelector('#monthly-income').value) || 5000;
                 
-                if (retirementBalance <= 0) break;
+                // Validate inputs
+                if (retirementAge <= currentAge) {
+                    alert('Retirement age must be greater than current age');
+                    return;
+                }
+                
+                // Calculate working years and retirement years
+                const workingYears = retirementAge - currentAge;
+                const totalYears = workingYears + retirementYears;
+                
+                // Calculate retirement savings at retirement age
+                let savings = currentSavings;
+                const workingProjection = [];
+                const monthlyRate = annualReturn / 100 / 12;
+                const months = workingYears * 12;
+                
+                // Track yearly totals
+                let yearlyContributions = 0;
+                let yearlyInterest = 0;
+                
+                for (let i = 0; i < months; i++) {
+                    const interest = savings * monthlyRate;
+                    savings += interest + monthlyContribution;
+                    
+                    yearlyContributions += monthlyContribution;
+                    yearlyInterest += interest;
+                    
+                    // Record yearly values
+                    if (i % 12 === 11 || i === months - 1) {
+                        const year = Math.floor(i / 12) + 1;
+                        workingProjection.push({
+                            age: currentAge + year,
+                            year,
+                            balance: savings,
+                            contributions: yearlyContributions,
+                            interest: yearlyInterest,
+                            withdrawals: 0
+                        });
+                        
+                        // Reset yearly totals
+                        yearlyContributions = 0;
+                        yearlyInterest = 0;
+                    }
+                }
+                
+                const retirementSavings = savings;
+                const totalContributions = currentSavings + (monthlyContribution * months);
+                const interestEarned = retirementSavings - totalContributions;
+                
+                // Calculate retirement withdrawals
+                let retirementBalance = retirementSavings;
+                const retirementProjection = [];
+                const retirementMonthlyRate = retirementReturn / 100 / 12;
+                const retirementMonths = retirementYears * 12;
+                let annualIncome = monthlyIncome * 12;
+                let totalWithdrawals = 0;
+                let savingsDepleted = false;
+                
+                // Track yearly totals
+                let yearlyWithdrawals = 0;
+                yearlyInterest = 0;
+                
+                for (let i = 0; i < retirementMonths; i++) {
+                    // Adjust income for inflation annually
+                    if (i % 12 === 0 && i > 0) {
+                        annualIncome *= (1 + (inflationRate / 100));
+                    }
+                    
+                    const monthlyWithdrawal = annualIncome / 12;
+                    const interest = retirementBalance * retirementMonthlyRate;
+                    retirementBalance += interest - monthlyWithdrawal;
+                    
+                    yearlyWithdrawals += monthlyWithdrawal;
+                    yearlyInterest += interest;
+                    totalWithdrawals += monthlyWithdrawal;
+                    
+                    if (retirementBalance <= 0) {
+                        retirementBalance = 0;
+                        savingsDepleted = true;
+                    }
+                    
+                    // Record yearly values
+                    if (i % 12 === 11 || i === retirementMonths - 1 || retirementBalance <= 0) {
+                        const year = workingYears + Math.floor(i / 12) + 1;
+                        retirementProjection.push({
+                            age: currentAge + year,
+                            year,
+                            balance: retirementBalance,
+                            contributions: 0,
+                            interest: yearlyInterest,
+                            withdrawals: yearlyWithdrawals
+                        });
+                        
+                        // Reset yearly totals
+                        yearlyWithdrawals = 0;
+                        yearlyInterest = 0;
+                        
+                        if (retirementBalance <= 0) break;
+                    }
+                }
+                
+                // Combine projections
+                const fullProjection = [...workingProjection, ...retirementProjection];
+                
+                // Calculate results
+                const requiredSavings = (monthlyIncome * 12 * retirementYears) / (retirementReturn / 100);
+                const savingsShortfall = Math.max(0, requiredSavings - retirementSavings);
+                const inflationAdjustedIncome = monthlyIncome * Math.pow(1 + (inflationRate / 100), workingYears);
+                
+                // Display results
+                this.container.querySelector('#retirement-savings').textContent = `$${retirementSavings.toLocaleString('en-US', {maximumFractionDigits: 0})}`;
+                this.container.querySelector('#annual-withdrawal').textContent = `$${(monthlyIncome * 12).toLocaleString('en-US')}/year`;
+                this.container.querySelector('#savings-shortfall').textContent = savingsShortfall > 0 ? 
+                    `$${savingsShortfall.toLocaleString('en-US', {maximumFractionDigits: 0})}` : 'None';
+                this.container.querySelector('#total-contributions').textContent = `$${totalContributions.toLocaleString('en-US', {maximumFractionDigits: 0})}`;
+                this.container.querySelector('#interest-earned').textContent = `$${interestEarned.toLocaleString('en-US', {maximumFractionDigits: 0})}`;
+                this.container.querySelector('#inflation-adjusted-income').textContent = `$${inflationAdjustedIncome.toLocaleString('en-US', {maximumFractionDigits: 0})}/month`;
+                
+                // Generate projection table
+                this.generateProjectionTable(fullProjection);
+                
+                // Generate chart
+                this.generateChart(fullProjection);
+                
+                // Show results
+                this.container.querySelector('#retirement-results').style.display = 'block';
+                
+            } catch (error) {
+                console.error('Calculation error:', error);
+                alert('An error occurred during calculation');
+            } finally {
+                calculateBtn.disabled = false;
+                calculateBtn.innerHTML = '<i class="fas fa-umbrella-beach"></i> Calculate Retirement Plan';
             }
-        }
-        
-        // Combine projections
-        const fullProjection = [...workingProjection, ...retirementProjection];
-        
-        // Calculate results
-        const requiredSavings = (monthlyIncome * 12 * retirementYears) / (retirementReturn / 100);
-        const savingsShortfall = Math.max(0, requiredSavings - retirementSavings);
-        const inflationAdjustedIncome = monthlyIncome * Math.pow(1 + (inflationRate / 100), workingYears);
-        
-        // Display results
-        document.getElementById('retirement-savings').textContent = `$${retirementSavings.toLocaleString('en-US', {maximumFractionDigits: 0})}`;
-        document.getElementById('annual-withdrawal').textContent = `$${(monthlyIncome * 12).toLocaleString('en-US')}/year`;
-        document.getElementById('savings-shortfall').textContent = savingsShortfall > 0 ? 
-            `$${savingsShortfall.toLocaleString('en-US', {maximumFractionDigits: 0})}` : 'None';
-        document.getElementById('total-contributions').textContent = `$${totalContributions.toLocaleString('en-US', {maximumFractionDigits: 0})}`;
-        document.getElementById('interest-earned').textContent = `$${interestEarned.toLocaleString('en-US', {maximumFractionDigits: 0})}`;
-        document.getElementById('inflation-adjusted-income').textContent = `$${inflationAdjustedIncome.toLocaleString('en-US', {maximumFractionDigits: 0})}/month`;
-        
-        // Generate projection table
-        this.generateProjectionTable(fullProjection);
-        
-        // Generate chart
-        this.generateChart(fullProjection);
-        
-        // Show results
-        document.getElementById('retirement-results').style.display = 'block';
+        }, 10);
     }
 
     generateProjectionTable(projection) {
-        const projectionBody = document.getElementById('projection-body');
+        const projectionBody = this.container.querySelector('#projection-body');
         projectionBody.innerHTML = '';
         
-        // Only show every 5 years and final year for brevity
-        const filteredProjection = projection.filter((item, index) => {
-            return item.year % 5 === 0 || 
-                   index === 0 || 
-                   index === projection.length - 1;
-        });
-        
-        filteredProjection.forEach(item => {
+        // Show all years in the table
+        projection.forEach(item => {
             const row = document.createElement('tr');
+            
+            // Highlight retirement year
+            if (item.withdrawals > 0 && item.contributions === 0) {
+                row.classList.add('retirement-year');
+            }
+            
+            // Highlight if balance is zero
+            if (item.balance <= 0) {
+                row.classList.add('zero-balance');
+            }
+            
             row.innerHTML = `
                 <td>${item.age}</td>
                 <td>${item.year}</td>
@@ -257,7 +308,7 @@ class RetirementCalculator {
     }
 
     generateChart(projection) {
-        const ctx = document.getElementById('retirement-chart').getContext('2d');
+        const ctx = this.container.querySelector('#retirement-chart').getContext('2d');
         const ages = projection.map(item => item.age);
         const balances = projection.map(item => item.balance);
         const contributions = projection.map(item => item.contributions);
@@ -278,7 +329,8 @@ class RetirementCalculator {
                         borderColor: '#4361ee',
                         backgroundColor: 'rgba(67, 97, 238, 0.1)',
                         fill: true,
-                        tension: 0.3
+                        tension: 0.3,
+                        borderWidth: 2
                     },
                     {
                         label: 'Contributions',
@@ -286,6 +338,7 @@ class RetirementCalculator {
                         borderColor: '#4cc9f0',
                         backgroundColor: 'rgba(76, 201, 240, 0.1)',
                         borderDash: [5, 5],
+                        borderWidth: 1,
                         fill: false
                     },
                     {
@@ -294,6 +347,7 @@ class RetirementCalculator {
                         borderColor: '#f72585',
                         backgroundColor: 'rgba(247, 37, 133, 0.1)',
                         borderDash: [5, 5],
+                        borderWidth: 1,
                         fill: false
                     }
                 ]
@@ -329,6 +383,13 @@ class RetirementCalculator {
     }
 
     setupEventListeners() {
-        document.getElementById('calculate-retirement').addEventListener('click', () => this.calculate());
+        this.container.querySelector('#calculate-retirement').addEventListener('click', () => this.calculate());
     }
+}
+
+// Export the class for use in other files
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = RetirementCalculator;
+} else {
+    window.RetirementCalculator = RetirementCalculator;
 }
