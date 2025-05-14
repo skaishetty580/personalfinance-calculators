@@ -2,6 +2,7 @@ class MortgageCalculator {
     constructor(container) {
         this.container = container;
         this.chart = null;
+        this.amortizationData = [];
         this.renderForm();
         this.setupEventListeners();
     }
@@ -123,20 +124,22 @@ class MortgageCalculator {
                 <div id="amortization-schedule" class="amortization-container" style="display: none;">
                     <h3>Amortization Schedule</h3>
                     <div class="schedule-controls">
-                        <button id="show-full-schedule" class="button small-button">Show Full Schedule</button>
-                        <button id="show-annual-schedule" class="button small-button active">Show Annual Summary</button>
+                        <button id="show-monthly-schedule" class="button small-button active">Monthly Payments</button>
+                        <button id="show-annual-summary" class="button small-button">Annual Summary</button>
                     </div>
                     <div class="table-container">
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Payment #</th>
-                                    <th>Date</th>
-                                    <th>Payment</th>
+                                    <th>Month</th>
+                                    <th>Payment Date</th>
                                     <th>Principal</th>
                                     <th>Interest</th>
-                                    <th>Total Interest</th>
-                                    <th>Balance</th>
+                                    <th>Taxes</th>
+                                    <th>Insurance</th>
+                                    <th>PMI</th>
+                                    <th>Total Payment</th>
+                                    <th>Remaining Balance</th>
                                 </tr>
                             </thead>
                             <tbody id="amortization-body">
@@ -201,28 +204,32 @@ class MortgageCalculator {
             const monthlyRate = rate / 100 / 12;
             const payments = term * 12;
             
-            // Calculate PMI
-            let pmiPayment = 0;
+            // Calculate monthly amounts
+            const monthlyTax = propertyTax / 12;
+            const monthlyInsurance = homeInsurance / 12;
+            
+            // Calculate PMI (if LTV > 80%)
+            let monthlyPMI = 0;
             let pmiMonths = 0;
             if (ltvRatio > 80) {
-                pmiPayment = (loanAmount * (pmiRate / 100)) / 12;
-                // Calculate months until LTV reaches 78%
-                pmiMonths = Math.ceil(Math.log(80/ltvRatio) / Math.log(1 + (rate/100/12)));
+                monthlyPMI = (loanAmount * (pmiRate / 100)) / 12;
+                // Calculate months until LTV reaches 78% (when PMI typically drops)
+                pmiMonths = Math.ceil(Math.log(78/ltvRatio) / Math.log(1 - (monthlyRate)));
                 pmiMonths = Math.min(pmiMonths, payments);
             }
             
-            // Calculate monthly payment
+            // Calculate principal & interest payment
             const monthlyPandI = loanAmount * monthlyRate * 
                 Math.pow(1 + monthlyRate, payments) / 
                 (Math.pow(1 + monthlyRate, payments) - 1);
             
-            const monthlyTax = propertyTax / 12;
-            const monthlyInsurance = homeInsurance / 12;
-            const monthlyPayment = monthlyPandI + monthlyTax + monthlyInsurance + pmiPayment;
+            // Total monthly payment (varies based on PMI duration)
+            const baseMonthlyPayment = monthlyPandI + monthlyTax + monthlyInsurance;
+            const initialMonthlyPayment = baseMonthlyPayment + monthlyPMI;
             
             // Calculate total costs
             const totalInterest = (monthlyPandI * payments) - loanAmount;
-            const totalPMI = pmiPayment * pmiMonths;
+            const totalPMI = monthlyPMI * pmiMonths;
             const totalCost = loanAmount + totalInterest + (propertyTax * term) + 
                              (homeInsurance * term) + totalPMI;
             
@@ -236,11 +243,13 @@ class MortgageCalculator {
                 downPayment,
                 amount,
                 ltvRatio,
-                monthlyPayment,
                 monthlyPandI,
                 monthlyTax,
                 monthlyInsurance,
-                pmiPayment,
+                monthlyPMI,
+                pmiMonths,
+                initialMonthlyPayment,
+                baseMonthlyPayment,
                 totalInterest,
                 totalCost,
                 payoffDate,
@@ -250,8 +259,18 @@ class MortgageCalculator {
                 totalPMI
             });
             
-            // Generate amortization schedule
-            this.generateAmortizationSchedule(loanAmount, monthlyRate, payments, monthlyPandI, startDate);
+            // Generate amortization schedule with all components
+            this.generateAmortizationSchedule(
+                loanAmount, 
+                monthlyRate, 
+                payments, 
+                monthlyPandI,
+                monthlyTax,
+                monthlyInsurance,
+                monthlyPMI,
+                pmiMonths,
+                startDate
+            );
             
             // Generate chart
             this.generateChart(loanAmount, totalInterest, propertyTax * term, 
@@ -275,12 +294,14 @@ class MortgageCalculator {
         document.getElementById('down-payment-result').textContent = 
             `${formatCurrency(results.downPayment)} (${(results.downPayment/results.amount*100).toFixed(1)}%)`;
         document.getElementById('ltv-ratio').textContent = formatPercent(results.ltvRatio);
-        document.getElementById('monthly-payment').textContent = formatCurrency(results.monthlyPayment);
+        document.getElementById('monthly-payment').textContent = 
+            `${formatCurrency(results.initialMonthlyPayment)}${results.pmiMonths > 0 ? 
+             ` (then ${formatCurrency(results.baseMonthlyPayment)} after ${results.pmiMonths} months)` : ''}`;
         document.getElementById('principal-interest').textContent = formatCurrency(results.monthlyPandI);
         document.getElementById('taxes-insurance').textContent = 
             formatCurrency(results.monthlyTax + results.monthlyInsurance);
         document.getElementById('pmi-payment').textContent = 
-            results.pmiPayment ? formatCurrency(results.pmiPayment) : '$0.00';
+            results.monthlyPMI ? `${formatCurrency(results.monthlyPMI)} for ${results.pmiMonths} months` : '$0.00';
         document.getElementById('total-interest').textContent = formatCurrency(results.totalInterest);
         document.getElementById('total-cost').textContent = formatCurrency(results.totalCost);
         document.getElementById('payoff-date').textContent = 
@@ -291,42 +312,83 @@ class MortgageCalculator {
             });
     }
 
-    generateAmortizationSchedule(loanAmount, monthlyRate, payments, monthlyPayment, startDate) {
+    generateAmortizationSchedule(
+        loanAmount, 
+        monthlyRate, 
+        payments, 
+        monthlyPandI,
+        monthlyTax,
+        monthlyInsurance,
+        monthlyPMI,
+        pmiMonths,
+        startDate
+    ) {
         let balance = loanAmount;
         let totalInterestPaid = 0;
-        const amortizationBody = document.getElementById('amortization-body');
-        amortizationBody.innerHTML = '';
-        
-        // Store all schedule data for filtering
         this.amortizationData = [];
         
-        for (let i = 1; i <= payments; i++) {
+        for (let month = 1; month <= payments; month++) {
             const interestPayment = balance * monthlyRate;
-            const principalPayment = monthlyPayment - interestPayment;
+            const principalPayment = monthlyPandI - interestPayment;
             totalInterestPaid += interestPayment;
             balance -= principalPayment;
             
             if (balance < 0) balance = 0;
             
+            // Calculate payment components for this month
+            const currentPMI = month <= pmiMonths ? monthlyPMI : 0;
+            const totalPayment = monthlyPandI + monthlyTax + monthlyInsurance + currentPMI;
+            
             const paymentDate = new Date(startDate);
-            paymentDate.setMonth(paymentDate.getMonth() + i);
+            paymentDate.setMonth(paymentDate.getMonth() + month);
             
             this.amortizationData.push({
-                paymentNumber: i,
+                month,
                 date: paymentDate,
-                payment: monthlyPayment,
                 principal: principalPayment,
                 interest: interestPayment,
-                totalInterest: totalInterestPaid,
-                balance: balance
+                tax: monthlyTax,
+                insurance: monthlyInsurance,
+                pmi: currentPMI,
+                totalPayment,
+                balance
             });
         }
         
-        // Show annual summary by default
-        this.showAnnualAmortization();
+        // Show monthly schedule by default
+        this.showMonthlyAmortization();
     }
 
-    showAnnualAmortization() {
+    showMonthlyAmortization() {
+        const amortizationBody = document.getElementById('amortization-body');
+        amortizationBody.innerHTML = '';
+        
+        const fragment = document.createDocumentFragment();
+        
+        this.amortizationData.forEach(payment => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${payment.month}</td>
+                <td>${payment.date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</td>
+                <td>$${payment.principal.toFixed(2)}</td>
+                <td>$${payment.interest.toFixed(2)}</td>
+                <td>$${payment.tax.toFixed(2)}</td>
+                <td>$${payment.insurance.toFixed(2)}</td>
+                <td>$${payment.pmi.toFixed(2)}</td>
+                <td>$${payment.totalPayment.toFixed(2)}</td>
+                <td>$${payment.balance.toFixed(2)}</td>
+            `;
+            fragment.appendChild(row);
+        });
+        
+        amortizationBody.appendChild(fragment);
+        
+        // Update button states
+        document.getElementById('show-monthly-schedule').classList.add('active');
+        document.getElementById('show-annual-summary').classList.remove('active');
+    }
+
+    showAnnualSummary() {
         const amortizationBody = document.getElementById('amortization-body');
         amortizationBody.innerHTML = '';
         
@@ -344,35 +406,28 @@ class MortgageCalculator {
         
         // Add last payment if not already included
         const lastPayment = this.amortizationData[this.amortizationData.length - 1];
-        if (lastPayment.paymentNumber % 12 !== 0 && this.amortizationData.length > 1) {
+        if (lastPayment.month % 12 !== 0 && this.amortizationData.length > 1) {
             this.addAmortizationRow(fragment, lastPayment);
         }
         
         amortizationBody.appendChild(fragment);
-    }
-
-    showFullAmortization() {
-        const amortizationBody = document.getElementById('amortization-body');
-        amortizationBody.innerHTML = '';
         
-        const fragment = document.createDocumentFragment();
-        
-        this.amortizationData.forEach(payment => {
-            this.addAmortizationRow(fragment, payment);
-        });
-        
-        amortizationBody.appendChild(fragment);
+        // Update button states
+        document.getElementById('show-monthly-schedule').classList.remove('active');
+        document.getElementById('show-annual-summary').classList.add('active');
     }
 
     addAmortizationRow(fragment, payment) {
         const row = document.createElement('tr');
         row.innerHTML = `
-            <td>${payment.paymentNumber}</td>
+            <td>${payment.month}</td>
             <td>${payment.date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</td>
-            <td>$${payment.payment.toFixed(2)}</td>
             <td>$${payment.principal.toFixed(2)}</td>
             <td>$${payment.interest.toFixed(2)}</td>
-            <td>$${payment.totalInterest.toFixed(2)}</td>
+            <td>$${payment.tax.toFixed(2)}</td>
+            <td>$${payment.insurance.toFixed(2)}</td>
+            <td>$${payment.pmi.toFixed(2)}</td>
+            <td>$${payment.totalPayment.toFixed(2)}</td>
             <td>$${payment.balance.toFixed(2)}</td>
         `;
         fragment.appendChild(row);
@@ -462,16 +517,12 @@ class MortgageCalculator {
             document.getElementById('mortgage-results').style.display = 'block';
         });
         
-        document.getElementById('show-full-schedule').addEventListener('click', () => {
-            this.showFullAmortization();
-            document.getElementById('show-full-schedule').classList.add('active');
-            document.getElementById('show-annual-schedule').classList.remove('active');
+        document.getElementById('show-monthly-schedule').addEventListener('click', () => {
+            this.showMonthlyAmortization();
         });
         
-        document.getElementById('show-annual-schedule').addEventListener('click', () => {
-            this.showAnnualAmortization();
-            document.getElementById('show-annual-schedule').classList.add('active');
-            document.getElementById('show-full-schedule').classList.remove('active');
+        document.getElementById('show-annual-summary').addEventListener('click', () => {
+            this.showAnnualSummary();
         });
     }
 }
