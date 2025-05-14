@@ -77,28 +77,28 @@ class InvestmentCalculator {
                     <div class="chart-container">
                         <canvas id="investment-chart"></canvas>
                     </div>
+                </div>
 
-                    <div id="performance-table" class="performance-table" style="display: none;">
-                        <h4>Year-by-Year Growth</h4>
-                        <div class="table-container">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Year</th>
-                                        <th>Starting Balance</th>
-                                        <th>Contributions</th>
-                                        <th>Interest</th>
-                                        <th>Ending Balance</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="performance-body">
-                                </tbody>
-                            </table>
-                        </div>
-                        <button id="back-to-results" class="button back-button">
-                            Back to Results
-                        </button>
+                <div id="performance-table" class="performance-table" style="display: none; margin-top: 20px;">
+                    <h4>Year-by-Year Growth</h4>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Year</th>
+                                    <th>Starting Balance</th>
+                                    <th>Contributions</th>
+                                    <th>Interest</th>
+                                    <th>Ending Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody id="performance-body">
+                            </tbody>
+                        </table>
                     </div>
+                    <button id="back-to-results" class="button back-button">
+                        Back to Summary
+                    </button>
                 </div>
             </div>
         `;
@@ -166,6 +166,7 @@ class InvestmentCalculator {
         this.generateChart(initialInvestment, totalContributions, interestEarned);
 
         document.getElementById('investment-results').style.display = 'block';
+        document.getElementById('performance-table').style.display = 'none';
     }
 
     displayResults(initialInvestment, totalContributions, interestEarned, balance) {
