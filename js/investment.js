@@ -48,12 +48,7 @@ class InvestmentCalculator {
                 </button>
 
                 <div id="investment-results" class="results-container" style="display: none;">
-                    <div class="results-header">
-                        <h3>Investment Projection</h3>
-                        <button id="view-performance" class="button card-button">
-                            View Performance Table
-                        </button>
-                    </div>
+                    <h3>Investment Projection Summary</h3>
 
                     <div class="results-grid">
                         <div class="result-item">
@@ -74,31 +69,28 @@ class InvestmentCalculator {
                         </div>
                     </div>
 
-                    <div class="chart-container">
+                    <div class="chart-container" style="margin-top: 30px;">
                         <canvas id="investment-chart"></canvas>
                     </div>
-                </div>
 
-                <div id="performance-table" class="performance-table" style="display: none; margin-top: 20px;">
-                    <h4>Year-by-Year Growth</h4>
-                    <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Year</th>
-                                    <th>Starting Balance</th>
-                                    <th>Contributions</th>
-                                    <th>Interest</th>
-                                    <th>Ending Balance</th>
-                                </tr>
-                            </thead>
-                            <tbody id="performance-body">
-                            </tbody>
-                        </table>
+                    <div id="performance-table" class="performance-table" style="margin-top: 40px;">
+                        <h3>Year-by-Year Growth</h3>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Year</th>
+                                        <th>Starting Balance</th>
+                                        <th>Contributions</th>
+                                        <th>Interest</th>
+                                        <th>Ending Balance</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="performance-body">
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <button id="back-to-results" class="button back-button">
-                        Back to Summary
-                    </button>
                 </div>
             </div>
         `;
@@ -166,7 +158,6 @@ class InvestmentCalculator {
         this.generateChart(initialInvestment, totalContributions, interestEarned);
 
         document.getElementById('investment-results').style.display = 'block';
-        document.getElementById('performance-table').style.display = 'none';
     }
 
     displayResults(initialInvestment, totalContributions, interestEarned, balance) {
@@ -221,18 +212,6 @@ class InvestmentCalculator {
         document.getElementById('calculate-investment').addEventListener('click', (e) => {
             e.preventDefault();
             this.calculate();
-        });
-
-        document.getElementById('view-performance').addEventListener('click', (e) => {
-            e.preventDefault();
-            document.getElementById('investment-results').style.display = 'none';
-            document.getElementById('performance-table').style.display = 'block';
-        });
-
-        document.getElementById('back-to-results').addEventListener('click', (e) => {
-            e.preventDefault();
-            document.getElementById('performance-table').style.display = 'none';
-            document.getElementById('investment-results').style.display = 'block';
         });
     }
 }
