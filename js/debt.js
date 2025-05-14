@@ -6,7 +6,6 @@ class DebtCalculator {
         this.maxMonths = 600; // 50 year maximum to prevent infinite loops
         this.renderForm();
         this.setupEventListeners();
-        console.log('DebtCalculator initialized'); // Debug log
     }
 
     renderForm() {
@@ -324,62 +323,40 @@ class DebtCalculator {
     }
 
     generatePayoffPlanTable(plan) {
-    const payoffBody = this.container.querySelector('#payoff-body');
-    payoffBody.innerHTML = '';
-    
-    // Track current month to group entries
-    let currentMonth = 0;
-    let monthGroup = [];
-    
-    plan.forEach((item, index) => {
-        if (item.month !== currentMonth) {
-            // Add previous month's group if exists
-            if (monthGroup.length > 0) {
+        const payoffBody = this.container.querySelector('#payoff-body');
+        payoffBody.innerHTML = '';
+        
+        // Track current month to group entries
+        let currentMonth = 0;
+        let monthGroup = [];
+        
+        plan.forEach((item, index) => {
+            if (item.month !== currentMonth) {
+                // Add previous month's group if exists
+                if (monthGroup.length > 0) {
+                    this.addMonthGroupToTable(payoffBody, currentMonth, monthGroup);
+                }
+                // Start new month group
+                currentMonth = item.month;
+                monthGroup = [item];
+            } else {
+                // Add to current month group
+                monthGroup.push(item);
+            }
+            
+            // Add the last month if we're at the end
+            if (index === plan.length - 1) {
                 this.addMonthGroupToTable(payoffBody, currentMonth, monthGroup);
             }
-            // Start new month group
-            currentMonth = item.month;
-            monthGroup = [item];
-        } else {
-            // Add to current month group
-            monthGroup.push(item);
-        }
-        
-        // Add the last month if we're at the end
-        if (index === plan.length - 1) {
-            this.addMonthGroupToTable(payoffBody, currentMonth, monthGroup);
-        }
-    });
-}
-
-addMonthGroupToTable(payoffBody, month, monthGroup) {
-    // Add each debt payment for the month
-    monthGroup.forEach(item => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${month}</td>
-            <td>${item.debt}</td>
-            <td>$${item.payment.toFixed(2)}</td>
-            <td>$${item.principal.toFixed(2)}</td>
-            <td>$${item.interest.toFixed(2)}</td>
-            <td>$${Math.max(0, item.remaining).toFixed(2)}</td>
-        `;
-        payoffBody.appendChild(row);
-    });
-    
-    // Add a separator row between months
-    if (monthGroup.length > 0) {
-        const separator = document.createElement('tr');
-        separator.className = 'month-separator';
-        separator.innerHTML = `<td colspan="6"></td>`;
-        payoffBody.appendChild(separator);
+        });
     }
-}
-        
-        filteredPlan.forEach(item => {
+
+    addMonthGroupToTable(payoffBody, month, monthGroup) {
+        // Add each debt payment for the month
+        monthGroup.forEach(item => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${item.month}</td>
+                <td>${month}</td>
                 <td>${item.debt}</td>
                 <td>$${item.payment.toFixed(2)}</td>
                 <td>$${item.principal.toFixed(2)}</td>
@@ -388,6 +365,14 @@ addMonthGroupToTable(payoffBody, month, monthGroup) {
             `;
             payoffBody.appendChild(row);
         });
+        
+        // Add a separator row between months
+        if (monthGroup.length > 0) {
+            const separator = document.createElement('tr');
+            separator.className = 'month-separator';
+            separator.innerHTML = `<td colspan="6"></td>`;
+            payoffBody.appendChild(separator);
+        }
     }
 
     generateChart(principal, interest) {
@@ -445,4 +430,11 @@ addMonthGroupToTable(payoffBody, month, monthGroup) {
             this.calculate();
         });
     }
+}
+
+// Export the class for use in other files
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = DebtCalculator;
+} else {
+    window.DebtCalculator = DebtCalculator;
 }
