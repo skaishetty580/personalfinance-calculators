@@ -417,49 +417,6 @@ th {
     background-color: #f8f9fa;
     font-weight: 500;
 }
-/* Debt Payoff Table Specific Styles */
-.payoff-plan table {
-    margin: 20px 0;
-}
-
-.payoff-plan th {
-    background-color: var(--primary-color);
-    color: white;
-}
-
-.month-separator {
-    height: 8px;
-    background-color: #f5f5f5;
-}
-
-.month-separator td {
-    padding: 0 !important;
-}
-
-#payoff-body tr:nth-child(even) {
-    background-color: rgba(67, 97, 238, 0.03);
-}
-
-#payoff-body tr:hover {
-    background-color: rgba(67, 97, 238, 0.08);
-}
-
-/* Special Sections */
-.amortization-container, 
-.projection-table, 
-.payoff-plan, 
-.expense-breakdown, 
-.tax-brackets {
-    margin-top: 30px;
-}
-/* Special Sections */
-.amortization-container, 
-.projection-table, 
-.payoff-plan, 
-.expense-breakdown, 
-.tax-brackets {
-    margin-top: 30px;
-}
 
 /* Status Indicators */
 .danger {
