@@ -1,6 +1,7 @@
 class InvestmentCalculator {
     constructor(container) {
         this.container = container;
+        this.chart = null;
         this.renderForm();
         this.setupEventListeners();
     }
@@ -11,33 +12,33 @@ class InvestmentCalculator {
                 <div class="input-row">
                     <div class="input-group">
                         <label for="initial-investment">Initial Investment ($)</label>
-                        <input type="number" id="initial-investment" placeholder="10,000">
+                        <input type="number" id="initial-investment" placeholder="10,000" min="0">
                     </div>
                     <div class="input-group">
                         <label for="monthly-contribution">Monthly Contribution ($)</label>
-                        <input type="number" id="monthly-contribution" placeholder="500">
+                        <input type="number" id="monthly-contribution" placeholder="500" min="0">
                     </div>
                 </div>
                 
                 <div class="input-row">
                     <div class="input-group">
                         <label for="investment-years">Investment Period (years)</label>
-                        <input type="number" id="investment-years" placeholder="20">
+                        <input type="number" id="investment-years" placeholder="20" min="1" max="100">
                     </div>
                     <div class="input-group">
                         <label for="expected-return">Expected Return (%)</label>
-                        <input type="number" id="expected-return" placeholder="7" step="0.1">
+                        <input type="number" id="expected-return" placeholder="7" step="0.1" min="0" max="50">
                     </div>
                 </div>
                 
                 <div class="input-row">
                     <div class="input-group">
                         <label for="inflation-rate">Inflation Rate (%)</label>
-                        <input type="number" id="inflation-rate" placeholder="2.5" step="0.1">
+                        <input type="number" id="inflation-rate" placeholder="2.5" step="0.1" min="0" max="20">
                     </div>
                     <div class="input-group">
                         <label for="tax-rate">Tax Rate (%)</label>
-                        <input type="number" id="tax-rate" placeholder="20" step="0.1">
+                        <input type="number" id="tax-rate" placeholder="20" step="0.1" min="0" max="100">
                     </div>
                 </div>
                 
@@ -56,8 +57,15 @@ class InvestmentCalculator {
                     <i class="fas fa-chart-line"></i> Calculate Investment Growth
                 </button>
                 
+                <div id="error-message" class="error-message" style="display: none;"></div>
+                
                 <div id="investment-results" class="results-container" style="display: none;">
-                    <h3>Investment Projection</h3>
+                    <div class="results-header">
+                        <h3>Investment Projection</h3>
+                        <button id="view-performance" class="button card-button">
+                            <i class="fas fa-table"></i> View Performance Table
+                        </button>
+                    </div>
                     
                     <div class="results-grid">
                         <div class="result-item">
@@ -90,7 +98,7 @@ class InvestmentCalculator {
                         <canvas id="investment-chart"></canvas>
                     </div>
                     
-                    <div class="performance-table">
+                    <div id="performance-table" class="performance-table" style="display: none;">
                         <h4>Year-by-Year Growth</h4>
                         <div class="table-container">
                             <table>
@@ -107,76 +115,154 @@ class InvestmentCalculator {
                                 </tbody>
                             </table>
                         </div>
+                        <button id="back-to-results" class="button back-button">
+                            <i class="fas fa-arrow-left"></i> Back to Results
+                        </button>
                     </div>
                 </div>
             </div>
         `;
     }
 
-    calculate() {
-        // Get input values
-        const initialInvestment = parseFloat(document.getElementById('initial-investment').value) || 10000;
-        const monthlyContribution = parseFloat(document.getElementById('monthly-contribution').value) || 500;
-        const years = parseFloat(document.getElementById('investment-years').value) || 20;
-        const expectedReturn = parseFloat(document.getElementById('expected-return').value) || 7;
-        const inflationRate = parseFloat(document.getElementById('inflation-rate').value) || 2.5;
-        const taxRate = parseFloat(document.getElementById('tax-rate').value) || 20;
-        const compoundFrequency = parseInt(document.getElementById('compound-frequency').value) || 12;
+    validateInputs() {
+        const initialInvestment = this.parseInputValue('initial-investment');
+        const monthlyContribution = this.parseInputValue('monthly-contribution');
+        const years = this.parseInputValue('investment-years');
+        const expectedReturn = this.parseInputValue('expected-return');
+        const inflationRate = this.parseInputValue('inflation-rate');
+        const taxRate = this.parseInputValue('tax-rate');
         
-        // Calculate values
-        const periods = years;
-        const periodicRate = expectedReturn / 100 / compoundFrequency;
-        const totalContributions = initialInvestment + (monthlyContribution * 12 * years);
-        
-        // Calculate future value with compound interest
-        let balance = initialInvestment;
-        const yearlyData = [];
-        
-        for (let year = 1; year <= years; year++) {
-            const startingBalance = balance;
-            let yearlyContributions = 0;
-            
-            for (let month = 1; month <= 12; month++) {
-                balance += monthlyContribution;
-                yearlyContributions += monthlyContribution;
-                balance *= (1 + periodicRate);
-            }
-            
-            const interestEarned = balance - startingBalance - yearlyContributions;
-            yearlyData.push({
-                year,
-                startingBalance,
-                contributions: yearlyContributions,
-                interest: interestEarned,
-                endingBalance: balance
-            });
+        if (initialInvestment < 0) {
+            throw new Error('Initial investment cannot be negative');
         }
         
-        const interestEarned = balance - totalContributions;
-        const inflationAdjusted = balance / Math.pow(1 + (inflationRate / 100), years);
-        const afterTaxes = balance - (interestEarned * (taxRate / 100));
+        if (monthlyContribution < 0) {
+            throw new Error('Monthly contribution cannot be negative');
+        }
         
-        // Display results
-        document.getElementById('initial-investment-result').textContent = `$${initialInvestment.toLocaleString('en-US')}`;
-        document.getElementById('total-contributions').textContent = `$${totalContributions.toLocaleString('en-US')}`;
-        document.getElementById('interest-earned').textContent = `$${interestEarned.toLocaleString('en-US')}`;
-        document.getElementById('final-balance').textContent = `$${balance.toLocaleString('en-US', {maximumFractionDigits: 0})}`;
-        document.getElementById('inflation-adjusted').textContent = `$${inflationAdjusted.toLocaleString('en-US', {maximumFractionDigits: 0})}`;
-        document.getElementById('after-taxes').textContent = `$${afterTaxes.toLocaleString('en-US', {maximumFractionDigits: 0})}`;
+        if (years < 1 || years > 100) {
+            throw new Error('Investment period must be between 1 and 100 years');
+        }
         
-        // Generate performance table
-        this.generatePerformanceTable(yearlyData);
+        if (expectedReturn < 0 || expectedReturn > 50) {
+            throw new Error('Expected return must be between 0% and 50%');
+        }
         
-        // Generate chart
-        this.generateChart(initialInvestment, totalContributions - initialInvestment, interestEarned);
+        if (inflationRate < 0 || inflationRate > 20) {
+            throw new Error('Inflation rate must be between 0% and 20%');
+        }
         
-        // Show results
-        document.getElementById('investment-results').style.display = 'block';
+        if (taxRate < 0 || taxRate > 100) {
+            throw new Error('Tax rate must be between 0% and 100%');
+        }
+        
+        return true;
+    }
+
+    parseInputValue(id) {
+        const element = document.getElementById(id);
+        const value = element.value.replace(/,/g, '');
+        return value ? parseFloat(value) : 0;
+    }
+
+    calculate() {
+        try {
+            this.validateInputs();
+            
+            // Get input values
+            const initialInvestment = this.parseInputValue('initial-investment') || 10000;
+            const monthlyContribution = this.parseInputValue('monthly-contribution') || 500;
+            const years = this.parseInputValue('investment-years') || 20;
+            const expectedReturn = this.parseInputValue('expected-return') || 7;
+            const inflationRate = this.parseInputValue('inflation-rate') || 2.5;
+            const taxRate = this.parseInputValue('tax-rate') || 20;
+            const compoundFrequency = parseInt(document.getElementById('compound-frequency').value) || 12;
+            
+            // Calculate compound interest with regular contributions
+            const periodicRate = expectedReturn / 100 / compoundFrequency;
+            const periods = years * compoundFrequency;
+            const periodicContribution = monthlyContribution * (12 / compoundFrequency);
+            
+            // Future value of initial investment
+            let futureValue = initialInvestment * Math.pow(1 + periodicRate, periods);
+            
+            // Future value of contributions (annuity formula)
+            if (periodicContribution > 0) {
+                futureValue += periodicContribution * (Math.pow(1 + periodicRate, periods) - 1) / periodicRate;
+            }
+            
+            // Calculate yearly breakdown
+            const yearlyData = [];
+            let balance = initialInvestment;
+            
+            for (let year = 1; year <= years; year++) {
+                const startingBalance = balance;
+                let yearlyContributions = 0;
+                
+                for (let period = 1; period <= compoundFrequency; period++) {
+                    balance += periodicContribution;
+                    yearlyContributions += periodicContribution;
+                    balance *= (1 + periodicRate);
+                }
+                
+                const interestEarned = balance - startingBalance - yearlyContributions;
+                yearlyData.push({
+                    year,
+                    startingBalance,
+                    contributions: yearlyContributions,
+                    interest: interestEarned,
+                    endingBalance: balance
+                });
+            }
+            
+            // Calculate summary values
+            const totalContributions = initialInvestment + (monthlyContribution * 12 * years);
+            const interestEarned = futureValue - totalContributions;
+            const inflationAdjusted = futureValue / Math.pow(1 + (inflationRate / 100), years);
+            const afterTaxes = futureValue - (interestEarned * (taxRate / 100));
+            
+            // Display results
+            this.displayResults({
+                initialInvestment,
+                totalContributions,
+                interestEarned,
+                futureValue,
+                inflationAdjusted,
+                afterTaxes
+            });
+            
+            // Generate performance table
+            this.generatePerformanceTable(yearlyData);
+            
+            // Generate chart
+            this.generateChart(initialInvestment, totalContributions - initialInvestment, interestEarned);
+            
+            // Show results
+            document.getElementById('investment-results').style.display = 'block';
+            document.getElementById('error-message').style.display = 'none';
+            
+        } catch (error) {
+            this.showError(error.message);
+            console.error(error);
+        }
+    }
+
+    displayResults(results) {
+        const formatCurrency = (value) => `$${value.toLocaleString('en-US', {maximumFractionDigits: 0})}`;
+        
+        document.getElementById('initial-investment-result').textContent = formatCurrency(results.initialInvestment);
+        document.getElementById('total-contributions').textContent = formatCurrency(results.totalContributions);
+        document.getElementById('interest-earned').textContent = formatCurrency(results.interestEarned);
+        document.getElementById('final-balance').textContent = formatCurrency(results.futureValue);
+        document.getElementById('inflation-adjusted').textContent = formatCurrency(results.inflationAdjusted);
+        document.getElementById('after-taxes').textContent = formatCurrency(results.afterTaxes);
     }
 
     generatePerformanceTable(data) {
         const performanceBody = document.getElementById('performance-body');
         performanceBody.innerHTML = '';
+        
+        const fragment = document.createDocumentFragment();
         
         data.forEach(item => {
             const row = document.createElement('tr');
@@ -187,8 +273,10 @@ class InvestmentCalculator {
                 <td>$${item.interest.toLocaleString('en-US', {maximumFractionDigits: 0})}</td>
                 <td>$${item.endingBalance.toLocaleString('en-US', {maximumFractionDigits: 0})}</td>
             `;
-            performanceBody.appendChild(row);
+            fragment.appendChild(row);
         });
+        
+        performanceBody.appendChild(fragment);
     }
 
     generateChart(initial, contributions, interest) {
@@ -199,11 +287,10 @@ class InvestmentCalculator {
         }
         
         this.chart = new Chart(ctx, {
-            type: 'bar',
+            type: 'doughnut',
             data: {
                 labels: ['Initial Investment', 'Contributions', 'Interest Earned'],
                 datasets: [{
-                    label: 'Investment Growth',
                     data: [initial, contributions, interest],
                     backgroundColor: [
                         '#4361ee',
@@ -217,24 +304,16 @@ class InvestmentCalculator {
                 responsive: true,
                 plugins: {
                     legend: {
-                        display: false
+                        position: 'right',
                     },
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                const label = context.dataset.label || '';
+                                const label = context.label || '';
                                 const value = context.raw || 0;
-                                return `${label}: $${value.toLocaleString('en-US')}`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return '$' + value.toLocaleString('en-US');
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: $${value.toLocaleString('en-US')} (${percentage}%)`;
                             }
                         }
                     }
@@ -243,7 +322,33 @@ class InvestmentCalculator {
         });
     }
 
+    showError(message) {
+        const errorElement = document.getElementById('error-message');
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+        document.getElementById('investment-results').style.display = 'none';
+    }
+
     setupEventListeners() {
         document.getElementById('calculate-investment').addEventListener('click', () => this.calculate());
+        
+        document.getElementById('view-performance').addEventListener('click', () => {
+            document.getElementById('investment-results').style.display = 'none';
+            document.getElementById('performance-table').style.display = 'block';
+            document.getElementById('performance-table').scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        document.getElementById('back-to-results').addEventListener('click', () => {
+            document.getElementById('performance-table').style.display = 'none';
+            document.getElementById('investment-results').style.display = 'block';
+        });
     }
 }
+
+// Initialize the calculator when the DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    const calculatorContainer = document.getElementById('investment-calculator');
+    if (calculatorContainer) {
+        new InvestmentCalculator(calculatorContainer);
+    }
+});
