@@ -28,18 +28,18 @@ class InvestmentCalculator {
                     </div>
                     <div class="input-group">
                         <label for="expected-return">Expected Return (%)</label>
-                        <input type="number" id="expected-return" placeholder="7" step="0.1" min="0" max="50" value="7">
+                        <input type="number" id="expected-return" placeholder="7" step="0.01" min="0" max="50" value="7">
                     </div>
                 </div>
                 
                 <div class="input-row">
                     <div class="input-group">
                         <label for="inflation-rate">Inflation Rate (%)</label>
-                        <input type="number" id="inflation-rate" placeholder="2.5" step="0.1" min="0" max="20" value="2.5">
+                        <input type="number" id="inflation-rate" placeholder="2.5" step="0.01" min="0" max="20" value="2.5">
                     </div>
                     <div class="input-group">
                         <label for="tax-rate">Tax Rate (%)</label>
-                        <input type="number" id="tax-rate" placeholder="20" step="0.1" min="0" max="100" value="20">
+                        <input type="number" id="tax-rate" placeholder="20" step="0.01" min="0" max="100" value="20">
                     </div>
                 </div>
                 
@@ -186,9 +186,8 @@ class InvestmentCalculator {
             const totalPeriods = years * compoundFrequency;
             const periodicContribution = monthlyContribution * (12 / compoundFrequency);
             
-            // Calculate future value
+            // Calculate future value with contributions
             let futureValue = initialInvestment * Math.pow(1 + periodicRate, totalPeriods);
-            
             if (periodicContribution > 0) {
                 futureValue += periodicContribution * (Math.pow(1 + periodicRate, totalPeriods) - 1) / periodicRate;
             }
@@ -232,6 +231,9 @@ class InvestmentCalculator {
                     afterTaxes
                 });
             }
+            
+            // Verify total interest matches the difference between future value and total contributions
+            totalInterest = futureValue - totalContributions;
             
             // Calculate summary values
             const inflationAdjusted = futureValue / Math.pow(1 + (inflationRate / 100), years);
