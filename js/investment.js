@@ -109,6 +109,8 @@ class InvestmentCalculator {
                                         <th>Contributions</th>
                                         <th>Interest</th>
                                         <th>Ending Balance</th>
+                                        <th>Inflation Adjusted</th>
+                                        <th>After Taxes</th>
                                     </tr>
                                 </thead>
                                 <tbody id="performance-body">
@@ -212,12 +214,18 @@ class InvestmentCalculator {
                     balance += contribution + periodInterest;
                 }
                 
+                // Calculate inflation-adjusted and after-tax values for each year
+                const inflationAdjusted = balance / Math.pow(1 + (inflationRate / 100), year);
+                const afterTaxes = balance - (yearlyInterest * (taxRate / 100));
+                
                 yearlyData.push({
                     year,
                     startingBalance,
                     contributions: yearlyContributions,
                     interest: yearlyInterest,
-                    endingBalance: balance
+                    endingBalance: balance,
+                    inflationAdjusted,
+                    afterTaxes
                 });
             }
             
@@ -245,6 +253,7 @@ class InvestmentCalculator {
             // Show results
             document.getElementById('investment-results').style.display = 'block';
             document.getElementById('error-message').style.display = 'none';
+            document.getElementById('performance-table').style.display = 'none';
             
         } catch (error) {
             this.showError(error.message);
@@ -277,6 +286,8 @@ class InvestmentCalculator {
                 <td>$${item.contributions.toLocaleString('en-US', {maximumFractionDigits: 2})}</td>
                 <td>$${item.interest.toLocaleString('en-US', {maximumFractionDigits: 2})}</td>
                 <td>$${item.endingBalance.toLocaleString('en-US', {maximumFractionDigits: 2})}</td>
+                <td>$${item.inflationAdjusted.toLocaleString('en-US', {maximumFractionDigits: 2})}</td>
+                <td>$${item.afterTaxes.toLocaleString('en-US', {maximumFractionDigits: 2})}</td>
             `;
             fragment.appendChild(row);
         });
@@ -337,13 +348,15 @@ class InvestmentCalculator {
     setupEventListeners() {
         document.getElementById('calculate-investment').addEventListener('click', () => this.calculate());
         
-        document.getElementById('view-performance').addEventListener('click', () => {
+        document.getElementById('view-performance').addEventListener('click', (e) => {
+            e.preventDefault();
             document.getElementById('investment-results').style.display = 'none';
             document.getElementById('performance-table').style.display = 'block';
             document.getElementById('performance-table').scrollIntoView({ behavior: 'smooth' });
         });
         
-        document.getElementById('back-to-results').addEventListener('click', () => {
+        document.getElementById('back-to-results').addEventListener('click', (e) => {
+            e.preventDefault();
             document.getElementById('performance-table').style.display = 'none';
             document.getElementById('investment-results').style.display = 'block';
         });
