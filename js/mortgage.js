@@ -151,6 +151,7 @@ class MortgageCalculator {
                 </div>
             </div>
         `;
+        this.setupEventListeners();
     }
 
     validateInputs() {
