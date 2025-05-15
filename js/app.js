@@ -80,6 +80,43 @@ const calculatorTitle = document.getElementById('calculator-title');
 calculatorIcon.className = `fas ${calculatorInfo[calculatorType].icon}`;
 calculatorTitle.textContent = calculatorInfo[calculatorType].title;
 calculatorIcon.style.color = '#4361ee'; // Force color change    
+  // Update <title> tag dynamically for SEO
+document.title = `${calculatorInfo[calculatorType].title} | [Your Website Name]`;
+
+// Update <meta name="description"> dynamically for SEO
+let metaDesc = document.querySelector('meta[name="description"]');
+if (metaDesc) {
+    // Update if already exists
+    switch (calculatorType) {
+        case 'mortgage':
+            metaDesc.setAttribute('content', 'Calculate your mortgage payments instantly with our free mortgage calculator. Easy, fast, and secure tool.');
+            break;
+        case 'investment':
+            metaDesc.setAttribute('content', 'Estimate your investment growth over time using our free investment calculator. Simple, fast, and secure.');
+            break;
+        case 'debt':
+            metaDesc.setAttribute('content', 'Plan your debt payoff journey easily using our free debt payoff calculator. Snowball and avalanche methods available.');
+            break;
+        case 'retirement':
+            metaDesc.setAttribute('content', 'Plan your retirement savings goals with our free retirement planner calculator. Easy, fast, and secure.');
+            break;
+        case 'budget':
+            metaDesc.setAttribute('content', 'Analyze your monthly or annual budget with our free budget analyzer tool.');
+            break;
+        case 'tax':
+            metaDesc.setAttribute('content', 'Estimate your taxes easily with our free tax calculator. Fast and secure online tool.');
+            break;
+        default:
+            metaDesc.setAttribute('content', 'Use our free financial calculators. No sign-up. Fast, easy, secure.');
+    }
+} else {
+    // If not found, create one
+    metaDesc = document.createElement('meta');
+    metaDesc.name = "description";
+    metaDesc.content = "Use our free financial calculators. No sign-up. Fast, easy, secure.";
+    document.head.appendChild(metaDesc);
+}
+      
         // Clear previous calculator
         calculatorContent.innerHTML = '';
         
