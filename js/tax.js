@@ -3,7 +3,7 @@ class TaxCalculator {
         this.container = container;
         this.chart = null;
         this.renderForm();
-        this.setupEventListeners();
+        
     }
 
     renderForm() {
@@ -184,6 +184,7 @@ class TaxCalculator {
                 </div>
             </div>
         `;
+        this.setupEventListeners();
     }
 
     calculate() {
