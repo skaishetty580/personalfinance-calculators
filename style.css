@@ -281,7 +281,8 @@ ul {
 /* Add this to your existing CSS */
 #calculator-icon {
     color: var(--primary-color); /* Uses your existing blue color variable */
-    font-size: 1.8rem;
+    font-size: 2.6rem;
+    margin-right: 12px;
 }
 #calculator-title {
     font-size: 2.2rem;
@@ -301,10 +302,9 @@ ul {
     }
     
     .title-wrapper {
-        order: 1;
-        width: 100%;
+        display: flex;
+        align-items: center;
         justify-content: center;
-        margin-top: 15px;
         gap: 15px;
     }
     
