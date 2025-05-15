@@ -274,18 +274,17 @@ ul {
 
 .title-wrapper #calculator-icon {
     color: var(--primary-color);
-    font-size: 2.6rem;
-    margin-right: 12px;
+    font-size: 2.0rem;
+    margin-right: 10px;
 }
 
 /* Add this to your existing CSS */
 #calculator-icon {
     color: var(--primary-color); /* Uses your existing blue color variable */
-    font-size: 2.6rem;
-    margin-right: 12px;
+    font-size: 1.8rem;
 }
 #calculator-title {
-    font-size: 2.2rem;
+    font-size: 1.8rem;
     margin: 0;
     color: var(--dark-color);
 }
@@ -300,15 +299,13 @@ ul {
     .calculator-header {
         flex-wrap: wrap;
     }
-
-  .title-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    margin-top: 10px;
-    margin-bottom: 20px;
-}
+    
+    .title-wrapper {
+        order: 1;
+        width: 100%;
+        justify-content: center;
+        margin-top: 15px;
+    }
     
     .back-button {
         order: 0;
