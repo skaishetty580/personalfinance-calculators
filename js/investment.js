@@ -4,7 +4,7 @@ class InvestmentCalculator {
         this.chart = null;
         this.yearlyData = [];
         this.renderForm();
-        this.setupEventListeners();
+        
     }
 
     renderForm() {
@@ -94,6 +94,7 @@ class InvestmentCalculator {
                 </div>
             </div>
         `;
+        this.setupEventListeners();
     }
 
     parseInputValue(id) {
