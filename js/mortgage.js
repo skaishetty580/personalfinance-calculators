@@ -4,8 +4,7 @@ class MortgageCalculator {
         this.chart = null;
         this.amortizationData = [];
         this.renderForm();
-        this.setupEventListeners();
-    }
+        }
 
     renderForm() {
         this.container.innerHTML = `
