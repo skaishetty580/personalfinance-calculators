@@ -3,7 +3,7 @@ class RetirementCalculator {
         this.container = container;
         this.chart = null;
         this.renderForm();
-        this.setupEventListeners();
+        
     }
 
     renderForm() {
@@ -118,6 +118,7 @@ class RetirementCalculator {
                 </div>
             </div>
         `;
+        this.setupEventListeners();
     }
 
     calculate() {
