@@ -301,18 +301,14 @@ ul {
         flex-wrap: wrap;
     }
 
-    .title-wrapper i {
-    font-size: 2.6rem;
-    color: var(--primary-color);
-    margin-right: 12px;
+  .title-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
-    
-    .title-wrapper {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 15px;
-    }
     
     .back-button {
         order: 0;
