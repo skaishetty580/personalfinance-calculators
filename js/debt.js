@@ -5,7 +5,7 @@ class DebtCalculator {
         this.chart = null;
         this.maxMonths = 600; // 50 year maximum to prevent infinite loops
         this.renderForm();
-        this.setupEventListeners();
+        
     }
 
     renderForm() {
@@ -108,6 +108,7 @@ class DebtCalculator {
                 </div>
             </div>
         `;
+        this.setupEventListeners();
     }
 
     addDebtEntry() {
