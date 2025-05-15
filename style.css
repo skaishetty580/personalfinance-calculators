@@ -300,6 +300,12 @@ ul {
     .calculator-header {
         flex-wrap: wrap;
     }
+
+    .title-wrapper i {
+    font-size: 2.6rem;
+    color: var(--primary-color);
+    margin-right: 12px;
+}
     
     .title-wrapper {
         display: flex;
