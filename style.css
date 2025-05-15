@@ -305,6 +305,7 @@ ul {
         width: 100%;
         justify-content: center;
         margin-top: 15px;
+        gap: 15px;
     }
     
     .back-button {
