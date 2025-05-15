@@ -69,7 +69,7 @@ const calculatorInfo = {
     mortgage: { title: 'Mortgage Calculator', icon: 'fa-home' },
     investment: { title: 'Investment Calculator', icon: 'fa-chart-line' },
     debt: { title: 'Debt Payoff Calculator', icon: 'fa-credit-card' },
-    retirement: { title: 'Retirement Planner', icon: 'fa-piggy-bank' },
+    retirement: { title: 'Retirement Planner', icon: 'fa-umbrella-beach' },
     budget: { title: 'Budget Analyzer', icon: 'fa-wallet' },
     tax: { title: 'Tax Calculator', icon: 'fa-file-invoice-dollar' }
 };
