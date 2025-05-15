@@ -3,7 +3,7 @@ class BudgetCalculator {
         this.container = container;
         this.categories = [];
         this.renderForm();
-        this.setupEventListeners();
+        
     }
 
     renderForm() {
@@ -101,6 +101,7 @@ class BudgetCalculator {
                 </div>
             </div>
         `;
+        this.setupEventListeners();
     }
 
     addCategory() {
