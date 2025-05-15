@@ -274,8 +274,8 @@ ul {
 
 .title-wrapper #calculator-icon {
     color: var(--primary-color);
-    font-size: 2.0rem;
-    margin-right: 10px;
+    font-size: 2.6rem;
+    margin-right: 12px;
 }
 
 /* Add this to your existing CSS */
@@ -284,7 +284,7 @@ ul {
     font-size: 1.8rem;
 }
 #calculator-title {
-    font-size: 1.8rem;
+    font-size: 2.2rem;
     margin: 0;
     color: var(--dark-color);
 }
