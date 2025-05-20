@@ -3,9 +3,7 @@ class BudgetCalculator {
         this.container = container;
         this.categories = [];
         this.renderForm();
-        
-    }
-
+       }
     renderForm() {
         this.container.innerHTML = `
             <div class="calculator-form">
@@ -19,7 +17,6 @@ class BudgetCalculator {
                         <input type="number" id="savings-goal" placeholder="20" step="0.1">
                     </div>
                 </div>
-                
                 <h4 style="margin: 20px 0 10px;">Expense Categories</h4>
                 <div id="expense-categories">
                     <div class="expense-category">
@@ -38,18 +35,14 @@ class BudgetCalculator {
                         </button>
                     </div>
                 </div>
-                
                 <button id="add-category" class="button card-button">
                     <i class="fas fa-plus"></i> Add Another Category
                 </button>
-                
                 <button id="calculate-budget" class="button cta-button">
                     <i class="fas fa-calculator"></i> Analyze Budget
                 </button>
-                
                 <div id="budget-results" class="results-container" style="display: none;">
                     <h3>Budget Analysis</h3>
-                    
                     <div class="results-grid">
                         <div class="result-item">
                             <h4>Monthly Income</h4>
@@ -76,11 +69,9 @@ class BudgetCalculator {
                             <p id="budget-status">-</p>
                         </div>
                     </div>
-                    
                     <div class="chart-container">
                         <canvas id="budget-chart"></canvas>
                     </div>
-                    
                     <div class="expense-breakdown">
                         <h4>Expense Breakdown</h4>
                         <div class="table-container">
@@ -103,7 +94,6 @@ class BudgetCalculator {
         `;
         this.setupEventListeners();
     }
-
     addCategory() {
         const categoryCount = document.querySelectorAll('.expense-category').length + 1;
         const category = document.createElement('div');
@@ -131,7 +121,6 @@ class BudgetCalculator {
             category.remove();
         });
     }
-
     calculate() {
         // Get income and savings goal
         const income = parseFloat(document.getElementById('monthly-income').value) || 5000;
@@ -153,22 +142,18 @@ class BudgetCalculator {
                 });
             }
         });
-        
         if (this.categories.length === 0) {
             alert('Please enter at least one expense category');
             return;
         }
-        
         // Calculate totals
         const totalExpenses = this.categories.reduce((sum, category) => sum + category.amount, 0);
         const savingsAmount = income * (savingsGoal / 100);
         const discretionaryIncome = income - totalExpenses - savingsAmount;
         const actualSavingsRate = ((income - totalExpenses) / income) * 100;
-        
         // Determine budget status
         let budgetStatus = '';
         let statusClass = '';
-        
         if (discretionaryIncome < 0) {
             budgetStatus = 'Deficit';
             statusClass = 'danger';
@@ -179,7 +164,6 @@ class BudgetCalculator {
             budgetStatus = 'Needs Adjustment';
             statusClass = 'warning';
         }
-        
         // Display results
         document.getElementById('income-result').textContent = `$${income.toLocaleString('en-US')}`;
         document.getElementById('total-expenses').textContent = `$${totalExpenses.toLocaleString('en-US')}`;
@@ -188,21 +172,16 @@ class BudgetCalculator {
         document.getElementById('discretionary-income').textContent = `$${discretionaryIncome.toLocaleString('en-US')}`;
         document.getElementById('budget-status').textContent = budgetStatus;
         document.getElementById('budget-status').className = statusClass;
-        
         // Generate expense breakdown
         this.generateExpenseBreakdown(income);
-        
         // Generate chart
         this.generateChart(income, totalExpenses, savingsAmount, discretionaryIncome);
-        
         // Show results
         document.getElementById('budget-results').style.display = 'block';
     }
-
     generateExpenseBreakdown(income) {
         const breakdownBody = document.getElementById('breakdown-body');
         breakdownBody.innerHTML = '';
-        
         // Standard budget recommendations (simplified)
         const recommendations = {
             'Housing': '25-35% of income',
@@ -215,11 +194,9 @@ class BudgetCalculator {
             'Entertainment': '5-10% of income',
             'Other': 'Varies'
         };
-        
         this.categories.forEach(category => {
             const row = document.createElement('tr');
             const recommendation = recommendations[category.name] || 'Varies';
-            
             row.innerHTML = `
                 <td>${category.name}</td>
                 <td>$${category.amount.toLocaleString('en-US')} (${category.percentage.toFixed(1)}%)</td>
@@ -229,14 +206,11 @@ class BudgetCalculator {
             breakdownBody.appendChild(row);
         });
     }
-
     generateChart(income, expenses, savings, discretionary) {
         const ctx = document.getElementById('budget-chart').getContext('2d');
-        
         if (this.chart) {
             this.chart.destroy();
         }
-        
         this.chart = new Chart(ctx, {
             type: 'doughnut',
             data: {
@@ -271,13 +245,11 @@ class BudgetCalculator {
             }
         });
     }
-
     setupEventListeners() {
         document.getElementById('add-category').addEventListener('click', (e) => {
             e.preventDefault();
             this.addCategory();
         });
-        
         document.getElementById('calculate-budget').addEventListener('click', () => this.calculate());
     }
 }
