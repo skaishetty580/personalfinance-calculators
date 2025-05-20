@@ -5,7 +5,6 @@ class MortgageCalculator {
         this.amortizationData = [];
         this.renderForm();
         }
-
     renderForm() {
         this.container.innerHTML = `
             <div class="calculator-form">
@@ -19,8 +18,7 @@ class MortgageCalculator {
                         <input type="number" id="down-payment" placeholder="60,000" min="0">
                     </div>
                 </div>
-                
-                <div class="input-row">
+                    <div class="input-row">
                     <div class="input-group">
                         <label for="interest-rate">Interest Rate (%)</label>
                         <input type="number" id="interest-rate" placeholder="3.5" step="0.01" min="0" max="25">
@@ -36,8 +34,7 @@ class MortgageCalculator {
                         </select>
                     </div>
                 </div>
-                
-                <div class="input-row">
+                    <div class="input-row">
                     <div class="input-group">
                         <label for="property-tax">Property Tax ($/year)</label>
                         <input type="number" id="property-tax" placeholder="3,600" min="0">
@@ -47,32 +44,26 @@ class MortgageCalculator {
                         <input type="number" id="home-insurance" placeholder="1,200" min="0">
                     </div>
                 </div>
-                
-                <div class="input-group">
+                    <div class="input-group">
                     <label for="pmi">PMI Rate (%)</label>
                     <input type="number" id="pmi" placeholder="0.5" step="0.01" value="0.5" min="0" max="2">
                 </div>
-                
-                <div class="input-group">
+                    <div class="input-group">
                     <label for="start-date">Loan Start Date</label>
                     <input type="date" id="start-date" value="${new Date().toISOString().split('T')[0]}">
                 </div>
-                
-                <button id="calculate-mortgage" class="button cta-button">
+                    <button id="calculate-mortgage" class="button cta-button">
                     <i class="fas fa-calculator"></i> Calculate Mortgage
                 </button>
-                
-                <div id="error-message" class="error-message" style="display: none;"></div>
-                
-                <div id="mortgage-results" class="results-container" style="display: none;">
+                    <div id="error-message" class="error-message" style="display: none;"></div>
+                    <div id="mortgage-results" class="results-container" style="display: none;">
                     <div class="results-header">
                         <h3>Mortgage Analysis</h3>
                         <button id="view-amortization" class="button card-button">
                             <i class="fas fa-table"></i> View Amortization Schedule
                         </button>
                     </div>
-                    
-                    <div class="results-grid">
+                        <div class="results-grid">
                         <div class="result-item">
                             <h4>Loan Amount</h4>
                             <p id="loan-amount-result">-</p>
@@ -114,13 +105,11 @@ class MortgageCalculator {
                             <p id="payoff-date">-</p>
                         </div>
                     </div>
-                    
-                    <div class="chart-container">
+                        <div class="chart-container">
                         <canvas id="mortgage-chart"></canvas>
                     </div>
                 </div>
-                
-                <div id="amortization-schedule" class="amortization-container" style="display: none;">
+                    <div id="amortization-schedule" class="amortization-container" style="display: none;">
                     <h3>Amortization Schedule</h3>
                     <div class="schedule-controls">
                         <button id="show-monthly-schedule" class="button small-button active">Monthly Payments</button>
@@ -153,41 +142,32 @@ class MortgageCalculator {
         `;
         this.setupEventListeners();
     }
-
     validateInputs() {
         const amount = this.parseInputValue('mortgage-amount');
         const downPayment = this.parseInputValue('down-payment');
         const rate = this.parseInputValue('interest-rate');
-        
         if (amount <= 0) {
             throw new Error('Loan amount must be positive');
         }
-        
         if (downPayment < 0) {
             throw new Error('Down payment cannot be negative');
         }
-        
         if (downPayment > amount) {
             throw new Error('Down payment cannot exceed loan amount');
         }
-        
         if (rate <= 0 || rate > 25) {
             throw new Error('Interest rate must be between 0.01% and 25%');
         }
-        
         return true;
     }
-
-    parseInputValue(id) {
+   parseInputValue(id) {
         const element = document.getElementById(id);
         const value = element.value.replace(/,/g, '');
         return value ? parseFloat(value) : 0;
     }
-
     calculate() {
         try {
             this.validateInputs();
-            
             // Get input values
             const amount = this.parseInputValue('mortgage-amount');
             const downPayment = this.parseInputValue('down-payment');
@@ -197,17 +177,14 @@ class MortgageCalculator {
             const homeInsurance = this.parseInputValue('home-insurance');
             const pmiRate = this.parseInputValue('pmi');
             const startDate = new Date(document.getElementById('start-date').value);
-            
             // Calculate loan details
             const loanAmount = amount - downPayment;
             const ltvRatio = (loanAmount / amount) * 100;
             const monthlyRate = rate / 100 / 12;
             const payments = term * 12;
-            
             // Calculate monthly amounts
             const monthlyTax = propertyTax / 12;
             const monthlyInsurance = homeInsurance / 12;
-            
             // Calculate PMI (if LTV > 80%)
             let monthlyPMI = 0;
             let pmiMonths = 0;
@@ -217,26 +194,21 @@ class MortgageCalculator {
                 pmiMonths = Math.ceil(Math.log(78/ltvRatio) / Math.log(1 - (monthlyRate)));
                 pmiMonths = Math.min(pmiMonths, payments);
             }
-            
             // Calculate principal & interest payment
             const monthlyPandI = loanAmount * monthlyRate * 
                 Math.pow(1 + monthlyRate, payments) / 
                 (Math.pow(1 + monthlyRate, payments) - 1);
-            
             // Total monthly payment (varies based on PMI duration)
             const baseMonthlyPayment = monthlyPandI + monthlyTax + monthlyInsurance;
             const initialMonthlyPayment = baseMonthlyPayment + monthlyPMI;
-            
             // Calculate total costs
             const totalInterest = (monthlyPandI * payments) - loanAmount;
             const totalPMI = monthlyPMI * pmiMonths;
             const totalCost = loanAmount + totalInterest + (propertyTax * term) + 
                              (homeInsurance * term) + totalPMI;
-            
             // Calculate payoff date
             const payoffDate = new Date(startDate);
             payoffDate.setMonth(payoffDate.getMonth() + payments);
-            
             // Display results
             this.displayResults({
                 loanAmount,
@@ -258,7 +230,6 @@ class MortgageCalculator {
                 homeInsurance,
                 totalPMI
             });
-            
             // Generate amortization schedule with all components
             this.generateAmortizationSchedule(
                 loanAmount, 
@@ -271,25 +242,20 @@ class MortgageCalculator {
                 pmiMonths,
                 startDate
             );
-            
             // Generate chart
             this.generateChart(loanAmount, totalInterest, propertyTax * term, 
                              homeInsurance * term, totalPMI);
-            
             // Show results
             document.getElementById('mortgage-results').style.display = 'block';
             document.getElementById('error-message').style.display = 'none';
-            
         } catch (error) {
             this.showError(error.message);
             console.error(error);
         }
     }
-
     displayResults(results) {
         const formatCurrency = (value) => `$${value.toLocaleString('en-US', {maximumFractionDigits: 2})}`;
         const formatPercent = (value) => `${value.toFixed(1)}%`;
-        
         document.getElementById('loan-amount-result').textContent = formatCurrency(results.loanAmount);
         document.getElementById('down-payment-result').textContent = 
             `${formatCurrency(results.downPayment)} (${(results.downPayment/results.amount*100).toFixed(1)}%)`;
@@ -311,7 +277,6 @@ class MortgageCalculator {
                 day: 'numeric' 
             });
     }
-
     generateAmortizationSchedule(
         loanAmount, 
         monthlyRate, 
@@ -326,22 +291,17 @@ class MortgageCalculator {
         let balance = loanAmount;
         let totalInterestPaid = 0;
         this.amortizationData = [];
-        
         for (let month = 1; month <= payments; month++) {
             const interestPayment = balance * monthlyRate;
             const principalPayment = monthlyPandI - interestPayment;
             totalInterestPaid += interestPayment;
             balance -= principalPayment;
-            
             if (balance < 0) balance = 0;
-            
             // Calculate payment components for this month
             const currentPMI = month <= pmiMonths ? monthlyPMI : 0;
             const totalPayment = monthlyPandI + monthlyTax + monthlyInsurance + currentPMI;
-            
             const paymentDate = new Date(startDate);
             paymentDate.setMonth(paymentDate.getMonth() + month);
-            
             this.amortizationData.push({
                 month,
                 date: paymentDate,
@@ -354,17 +314,13 @@ class MortgageCalculator {
                 balance
             });
         }
-        
         // Show monthly schedule by default
         this.showMonthlyAmortization();
     }
-
     showMonthlyAmortization() {
         const amortizationBody = document.getElementById('amortization-body');
         amortizationBody.innerHTML = '';
-        
         const fragment = document.createDocumentFragment();
-        
         this.amortizationData.forEach(payment => {
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -380,43 +336,33 @@ class MortgageCalculator {
             `;
             fragment.appendChild(row);
         });
-        
         amortizationBody.appendChild(fragment);
-        
         // Update button states
         document.getElementById('show-monthly-schedule').classList.add('active');
         document.getElementById('show-annual-summary').classList.remove('active');
     }
-
     showAnnualSummary() {
         const amortizationBody = document.getElementById('amortization-body');
         amortizationBody.innerHTML = '';
-        
         const fragment = document.createDocumentFragment();
-        
         // Add first payment
         if (this.amortizationData.length > 0) {
             this.addAmortizationRow(fragment, this.amortizationData[0]);
         }
-        
         // Add annual payments
         for (let i = 11; i < this.amortizationData.length; i += 12) {
             this.addAmortizationRow(fragment, this.amortizationData[i]);
         }
-        
         // Add last payment if not already included
         const lastPayment = this.amortizationData[this.amortizationData.length - 1];
         if (lastPayment.month % 12 !== 0 && this.amortizationData.length > 1) {
             this.addAmortizationRow(fragment, lastPayment);
         }
-        
         amortizationBody.appendChild(fragment);
-        
         // Update button states
         document.getElementById('show-monthly-schedule').classList.remove('active');
         document.getElementById('show-annual-summary').classList.add('active');
     }
-
     addAmortizationRow(fragment, payment) {
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -432,15 +378,12 @@ class MortgageCalculator {
         `;
         fragment.appendChild(row);
     }
-
     generateChart(principal, interest, taxes, insurance, pmi) {
         const ctx = document.getElementById('mortgage-chart').getContext('2d');
-        
         // Destroy existing chart if it exists
         if (this.chart) {
             this.chart.destroy();
         }
-        
         // Filter out zero values for cleaner chart
         const labels = ['Principal', 'Interest', 'Taxes', 'Insurance', 'PMI'];
         const data = [principal, interest, taxes, insurance, pmi];
@@ -451,11 +394,9 @@ class MortgageCalculator {
             '#4cc9f0',
             '#4895ef'
         ];
-        
         const filteredLabels = [];
         const filteredData = [];
         const filteredColors = [];
-        
         data.forEach((value, index) => {
             if (value > 0) {
                 filteredLabels.push(labels[index]);
@@ -463,7 +404,6 @@ class MortgageCalculator {
                 filteredColors.push(backgroundColors[index]);
             }
         });
-        
         this.chart = new Chart(ctx, {
             type: 'doughnut',
             data: {
@@ -495,38 +435,31 @@ class MortgageCalculator {
             }
         });
     }
-
     showError(message) {
         const errorElement = document.getElementById('error-message');
         errorElement.textContent = message;
         errorElement.style.display = 'block';
         document.getElementById('mortgage-results').style.display = 'none';
     }
-
     setupEventListeners() {
         document.getElementById('calculate-mortgage').addEventListener('click', () => this.calculate());
-        
         document.getElementById('view-amortization').addEventListener('click', () => {
             document.getElementById('mortgage-results').style.display = 'none';
             document.getElementById('amortization-schedule').style.display = 'block';
             document.getElementById('amortization-schedule').scrollIntoView({ behavior: 'smooth' });
         });
-        
         document.getElementById('back-to-results').addEventListener('click', () => {
             document.getElementById('amortization-schedule').style.display = 'none';
             document.getElementById('mortgage-results').style.display = 'block';
         });
-        
         document.getElementById('show-monthly-schedule').addEventListener('click', () => {
             this.showMonthlyAmortization();
         });
-        
         document.getElementById('show-annual-summary').addEventListener('click', () => {
             this.showAnnualSummary();
         });
     }
 }
-
 // Initialize the calculator when the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     const calculatorContainer = document.getElementById('mortgage-calculator');
