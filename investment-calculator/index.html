@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Investment Calculator | SmartFinCalc</title>
+  <meta name="description" content="Estimate your investment growth over time with compounding.">
+  <link rel="canonical" href="https://smartfincalc.com/investment-calculator/">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="/js/investment.js" defer></script>
+  <style>
+    body { font-family: Poppins, sans-serif; margin: 2rem; }
+    .calculator { max-width: 600px; margin: auto; }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Investment Calculator",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "All",
+    "url": "https://smartfincalc.com/investment-calculator/",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+</head>
+<body>
+  <h1>Investment Calculator</h1>
+  <div class="calculator">
+    <!-- Sample Input -->
+    <input type="number" placeholder="Enter amount" />
+    <button onclick="calculate()">Calculate</button>
+    <div id="result"></div>
+  </div>
+</body>
+</html>

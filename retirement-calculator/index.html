@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Retirement Calculator | SmartFinCalc</title>
+  <meta name="description" content="Project your retirement savings and plan your future with confidence.">
+  <link rel="canonical" href="https://smartfincalc.com/retirement-calculator/">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="/js/retirement.js" defer></script>
+  <style>
+    body { font-family: Poppins, sans-serif; margin: 2rem; }
+    .calculator { max-width: 600px; margin: auto; }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Retirement Calculator",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "All",
+    "url": "https://smartfincalc.com/retirement-calculator/",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+</head>
+<body>
+  <h1>Retirement Calculator</h1>
+  <div class="calculator">
+    <!-- Sample Input -->
+    <input type="number" placeholder="Enter amount" />
+    <button onclick="calculate()">Calculate</button>
+    <div id="result"></div>
+  </div>
+</body>
+</html>

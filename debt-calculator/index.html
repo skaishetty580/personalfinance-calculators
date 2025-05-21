@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Debt Calculator | SmartFinCalc</title>
+  <meta name="description" content="Calculate your debt repayment strategy and interest savings.">
+  <link rel="canonical" href="https://smartfincalc.com/debt-calculator/">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="/js/debt.js" defer></script>
+  <style>
+    body { font-family: Poppins, sans-serif; margin: 2rem; }
+    .calculator { max-width: 600px; margin: auto; }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Debt Calculator",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "All",
+    "url": "https://smartfincalc.com/debt-calculator/",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+</head>
+<body>
+  <h1>Debt Calculator</h1>
+  <div class="calculator">
+    <!-- Sample Input -->
+    <input type="number" placeholder="Enter amount" />
+    <button onclick="calculate()">Calculate</button>
+    <div id="result"></div>
+  </div>
+</body>
+</html>

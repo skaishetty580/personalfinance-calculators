@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Tax Calculator | SmartFinCalc</title>
+  <meta name="description" content="Estimate your tax obligations with our simple and accurate tax calculator.">
+  <link rel="canonical" href="https://smartfincalc.com/tax-calculator/">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="/js/tax.js" defer></script>
+  <style>
+    body { font-family: Poppins, sans-serif; margin: 2rem; }
+    .calculator { max-width: 600px; margin: auto; }
+  </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Tax Calculator",
+    "applicationCategory": "FinanceApplication",
+    "operatingSystem": "All",
+    "url": "https://smartfincalc.com/tax-calculator/",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+</head>
+<body>
+  <h1>Tax Calculator</h1>
+  <div class="calculator">
+    <!-- Sample Input -->
+    <input type="number" placeholder="Enter amount" />
+    <button onclick="calculate()">Calculate</button>
+    <div id="result"></div>
+  </div>
+</body>
+</html>
