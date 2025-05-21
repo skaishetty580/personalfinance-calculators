@@ -1,39 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="https://www.sitemaps.org/schemas/sitemap/0.9">
-
-  <url>
-    <loc>https://smartfincalc.com/</loc>
-    <priority>1.0</priority>
-  </url>
-
-  <url>
-    <loc>https://smartfincalc.com/investment-calculator</loc>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://smartfincalc.com/mortgage-calculator</loc>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://smartfincalc.com/debt-payoff-calculator</loc>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://smartfincalc.com/retirement-planner</loc>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://smartfincalc.com/tax-calculator</loc>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
-    <loc>https://smartfincalc.com/budget-calculator</loc>
-    <priority>0.8</priority>
-  </url>
-
+<url><loc>https://smartfincalc.com/retirement-calculator/</loc></url>
+  <url><loc>https://smartfincalc.com/mortgage-calculator/</loc></url>
+  <url><loc>https://smartfincalc.com/budget-calculator/</loc></url>
+  <url><loc>https://smartfincalc.com/debt-calculator/</loc></url>
+  <url><loc>https://smartfincalc.com/investment-calculator/</loc></url>
+  <url><loc>https://smartfincalc.com/tax-calculator/</loc></url>
 </urlset>
