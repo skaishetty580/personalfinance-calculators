@@ -346,3 +346,11 @@ if (typeof module !== 'undefined' && module.exports) {
 } else {
     window.RetirementCalculator = RetirementCalculator;
 }
+
+// Initialize the calculator when the DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    const calculatorContainer = document.getElementById('retirement-calculator');
+    if (calculatorContainer) {
+        new RetirementCalculator(calculatorContainer);
+    }
+});
