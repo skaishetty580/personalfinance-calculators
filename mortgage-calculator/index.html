@@ -29,6 +29,66 @@
 </head>
 <body>
   <h1>Mortgage Calculator</h1>
+  <!-- Calculator container (initially hidden) -->
+<div id="calculator-container" class="calculator-container" style="display: none;">
+    <div class="container">
+        <!--div class="calculator-header">
+            <button id="back-to-home" class="button back-button">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </button>
+            <div class="calculator-title">
+                <i id="calculator-icon" class="fas"></i>
+                <h2 id="calculator-title"></h2>
+            </div>
+    </div -->
+       <!-- div class="calculator-header">
+            <button id="back-to-home" class="button back-button">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </button>
+            <div class="title-wrapper">
+                <i class="fas" id="calculator-icon"></i>
+                <h2 id="calculator-title"></h2>
+            </div>
+    </div-->
+        <div class="calculator-header">
+    <button id="back-to-home" class="button back-button">
+        <i class="fas fa-arrow-left"></i> Back to Home
+    </button>
+    <div class="title-wrapper">
+        <i class="fas" id="calculator-icon" style="color: #4361ee;"></i>
+        <h2 id="calculator-title" style="margin: 0; display: inline;"></h2>
+    </div>
+</div>
+        <div class="calculator-content"></div>
+    </div>
+</div>
+</div>
+      <footer class="main-footer">
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-logo">
+                    <i class="fas fa-calculator"></i>
+                    <span>SmartFin<span style="color: var(--primary-color);">Calc</span></span>
+                </div>
+                    <div class="footer-links">
+                    <a href="privacy-policy.html">Privacy Policy</a>
+                    <a href="disclaimer.html">Disclaimer</a>
+                    <!--a href="#">Advertise With Us</a>
+                    <a href="#">Contact</a-->
+                </div>
+                
+                <!--div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Disclaimer</a>
+                    <!--a href="#">Advertise With Us</a>
+                    <a href="#">Contact</a -->
+                </div -->
+                <div class="copyright">
+                    &copy; <span id="current-year"></span> SmartFinCalc. All rights reserved. The information provided by SmartFinCalc is for general informational purposes only and should not be considered as financial advice.
+                </div>
+            </div>
+        </div>
+    </footer>
    <!-- JavaScript Files -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
     <script src="js/mortgage.js" defer></script>
