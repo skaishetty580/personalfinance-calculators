@@ -37,7 +37,7 @@
 
   <section class="calculators-section calculator-container" id="calculator-container" style="display:block;">
     <div class="container">
-      <div class="calculator-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+      <!--div class="calculator-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
         <div class="title-wrapper calculator-title" style="display: flex; align-items: center; gap: 10px;">
           <i id="calculator-icon" class="fas fa-home"></i>
           <h2 id="calculator-title">Mortgage Calculator</h2>
@@ -45,8 +45,16 @@
         <button onclick="window.location.href='/'" class="button back-button" style="margin-top: 10px;">
           <i class="fas fa-arrow-left"></i> Back to Home
         </button>
-      </div>
-
+    </div-->
+ <div class="calculator-header">
+    <button id="back-to-home" class="button back-button">
+        <i class="fas fa-arrow-left"></i> Back to Home
+    </button>
+    <div class="title-wrapper">
+        <i class="fas fa-home" id="calculator-icon" style="color: #4361ee;"></i>
+        <h2 id="calculator-title" style="margin: 0; display: inline;"></h2>
+    </div>
+</div>
       <div class="calculator-content">
         <div id="mortgage-calculator"></div>
       </div>
