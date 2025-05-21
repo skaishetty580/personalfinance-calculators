@@ -253,3 +253,10 @@ class BudgetCalculator {
         document.getElementById('calculate-budget').addEventListener('click', () => this.calculate());
     }
 }
+// Initialize the calculator when the DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    const calculatorContainer = document.getElementById('budget-calculator');
+    if (calculatorContainer) {
+        new BudgetCalculator(calculatorContainer);
+    }
+});
