@@ -387,3 +387,11 @@ if (typeof module !== 'undefined' && module.exports) {
 } else {
     window.DebtCalculator = DebtCalculator;
 }
+// Initialize the calculator when the DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    const calculatorContainer = document.getElementById('debt-calculator');
+    if (calculatorContainer) {
+        new DebtCalculator(calculatorContainer);
+    }
+});
+
