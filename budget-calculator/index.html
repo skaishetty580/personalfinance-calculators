@@ -43,11 +43,11 @@
 <p class="subtitle">Create a personal monthly budget with SmartFinCalc. Track income, expenses, and savings goals to manage your finances and stay on top of spending.</p>
 </div>
 <div class="hero-image">
-<i class="fas fa-home" style="font-size: 120px; color: #0b1a5e; opacity: 0.9;"></i>
+<i class="fas fa-wallet" style="font-size: 120px; color: #0b1a5e; opacity: 0.9;"></i>
 </div>
 </div>
 </section>
-<div class="container">
+<!--div class="container">
 <div class="calculator-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
 <button class="button back-button" onclick="window.location.href='/'" style="margin-top: 10px;">
 <i class="fas fa-arrow-left"></i> Back to Home
@@ -55,7 +55,21 @@
 </div>
 <div id="budget-Analyzer" style="width: 250%; max-width: 1160px;"></div>
 </div>
-</div>
+</div-->
+ <div id="calculator-container" class="calculator-container" style="display: block;">
+  <div class="container">
+    <div class="calculator-header">
+      <button id="back-to-home" class="button back-button">
+        <i class="fas fa-arrow-left"></i> Back to Home
+      </button>
+      <div class="title-wrapper">
+        <i class="fas fa-wallet" id="calculator-icon"></i>
+        <h2 id="calculator-title">Budget Analyzer</h2>
+      </div>
+    </div>
+    <div class="calculator-content"></div>
+  </div>
+</div> 
 <footer class="main-footer">
 <div class="container">
 <div class="footer-container">
