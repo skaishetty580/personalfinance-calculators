@@ -5,7 +5,8 @@ class FinanceApp {
             investment: null,
             debt: null,
             retirement: null,
-            budget: null
+            budget: null,
+            tax: null
         };
         this.currentCalculator = null;
         this.init();
@@ -89,7 +90,8 @@ class FinanceApp {
             investment: 'Investment Calculator',
             debt: 'Debt Payoff Calculator',
             retirement: 'Retirement Planner',
-            budget: 'Budget Analyzer'
+            budget: 'Budget Analyzer',
+            tax: 'Tax Calculator'
         };
         document.getElementById('calculator-title').textContent = titleMap[calculatorType];
         
@@ -149,6 +151,17 @@ class FinanceApp {
                     calculatorContent.innerHTML = '';
                     this.calculators.budget.container = calculatorContent;
                     this.calculators.budget.renderForm();
+                }
+                this.currentCalculator = this.calculators.budget;
+                break;
+
+                case 'tax':
+                if (!this.calculators.tax) {
+                    this.calculators.tax = new TaxCalculator(calculatorContent);
+                } else {
+                    calculatorContent.innerHTML = '';
+                    this.calculators.tax.container = calculatorContent;
+                    this.calculators.tax.renderForm();
                 }
                 this.currentCalculator = this.calculators.budget;
                 break;
