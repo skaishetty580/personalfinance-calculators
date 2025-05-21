@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Investment Calculator | SmartFinCalc</title>
-  <meta name="description" content="Estimate your investment growth over time with compounding.">
-  <link rel="canonical" href="https://smartfincalc.com/investment-calculator/">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="/js/investment.js" defer></script>
-  <style>
-    body { font-family: Poppins, sans-serif; margin: 2rem; }
-    .calculator { max-width: 600px; margin: auto; }
-  </style>
-  <script type="application/ld+json">
+<meta charset="utf-8"/>
+<title>Investment Calculator | SmartFinCalc</title>
+<meta content="description" content="Calculate your investment growth with SmartFinCalc. Estimate future value based on contributions, interest rate, time horizon, and compounding frequency. Free and easy to use." name="description"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link rel="canonical" href="https://smartfincalc.com/investment-calculator/">
+<link href="/style.css" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script defer="" src="/main.js"></script>
+<script defer="" src="/js/investment.js"></script>
+<script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
@@ -25,13 +25,56 @@
       "priceCurrency": "USD"
     }
   }
-  </script>
+ </script>
 </head>
 <body>
-  <h1>Investment Calculator</h1>
-   <!-- JavaScript Files -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-    <script src="js/investment.js" defer></script>
-    <script>
+<header class="main-header">
+<div class="container">
+<div class="logo">
+<i class="fas fa-calculator"></i>
+<span>SmartFin<span class="logo-highlight">Calc</span></span>
+</div>
+</div>
+</header>
+<section class="hero">
+<div class="container" style="display: flex; align-items: center; justify-content: space-between; padding: 40px 0;">
+<div class="hero-content">
+<h2>Investment Calculator</h2>
+<p class="subtitle">Calculate your investment growth with SmartFinCalc. Estimate future value based on contributions, interest rate, time horizon, and compounding frequency. Free and easy to use.</p>
+</div>
+<div class="hero-image">
+<i class="fas fa-home" style="font-size: 120px; color: #0b1a5e; opacity: 0.9;"></i>
+</div>
+</div>
+</section>
+<div class="container">
+<div class="calculator-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+<button class="button back-button" onclick="window.location.href='/'" style="margin-top: 10px;">
+<i class="fas fa-arrow-left"></i> Back to Home
+        </button>
+</div>
+<div id="investment-calculator" style="width: 250%; max-width: 1150px;"></div>
+</div>
+</div>
+<footer class="main-footer">
+<div class="container">
+<div class="footer-container">
+<div class="footer-logo">
+<i class="fas fa-calculator"></i>
+<span>SmartFin<span style="color: var(--primary-color);">Calc</span></span>
+</div>
+<div class="footer-links">
+<a href="/privacy-policy.html">Privacy Policy</a>
+<a href="/disclaimer.html">Disclaimer</a>
+</div>
+<div class="copyright">
+          © <span id="current-year"></span> SmartFinCalc. All rights reserved.
+        </div>
+</div>
+</div>
+</footer>
+<script>
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
