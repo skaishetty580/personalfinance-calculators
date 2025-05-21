@@ -340,12 +340,7 @@ class RetirementCalculator {
         this.container.querySelector('#calculate-retirement').addEventListener('click', () => this.calculate());
     }
 }
-// Export the class for use in other files
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = RetirementCalculator;
-} else {
-    window.RetirementCalculator = RetirementCalculator;
-}
+
 
 // Initialize the calculator when the DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
