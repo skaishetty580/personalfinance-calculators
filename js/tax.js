@@ -3,9 +3,7 @@ class TaxCalculator {
         this.container = container;
         this.chart = null;
         this.renderForm();
-        
-    }
-
+        }
     renderForm() {
         this.container.innerHTML = `
             <div class="calculator-form">
@@ -23,7 +21,6 @@ class TaxCalculator {
                         </select>
                     </div>
                 </div>
-                
                 <div class="input-row">
                     <div class="input-group">
                         <label for="tax-state">State</label>
@@ -90,9 +87,7 @@ class TaxCalculator {
                         </select>
                     </div>
                 </div>
-                
                 <h4 style="margin: 20px 0 10px;">Deductions & Credits</h4>
-                
                 <div class="input-row">
                     <div class="input-group">
                         <label for="standard-deduction">Standard Deduction ($)</label>
@@ -103,7 +98,6 @@ class TaxCalculator {
                         <input type="number" id="itemized-deductions" placeholder="0">
                     </div>
                 </div>
-                
                 <div class="input-row">
                     <div class="input-group">
                         <label for="retirement-contributions">Retirement Contributions ($)</label>
@@ -114,14 +108,11 @@ class TaxCalculator {
                         <input type="number" id="education-credits" placeholder="0">
                     </div>
                 </div>
-                
                 <button id="calculate-tax" class="button cta-button">
                     <i class="fas fa-calculator"></i> Calculate Tax Liability
                 </button>
-                
                 <div id="tax-results" class="results-container" style="display: none;">
                     <h3>Tax Estimation</h3>
-                    
                     <div class="results-grid">
                         <div class="result-item">
                             <h4>Gross Income</h4>
@@ -160,11 +151,9 @@ class TaxCalculator {
                             <p id="after-tax-income">-</p>
                         </div>
                     </div>
-                    
                     <div class="chart-container">
                         <canvas id="tax-chart"></canvas>
                     </div>
-                    
                     <div class="tax-brackets">
                         <h4>Federal Tax Breakdown</h4>
                         <div class="table-container">
@@ -186,13 +175,11 @@ class TaxCalculator {
         `;
         this.setupEventListeners();
     }
-
     calculate() {
         // Show loading state
         const calculateBtn = this.container.querySelector('#calculate-tax');
         calculateBtn.disabled = true;
         calculateBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Calculating...';
-        
         try {
             // Get input values
             const income = parseFloat(this.container.querySelector('#tax-income').value) || 75000;
@@ -203,23 +190,19 @@ class TaxCalculator {
             const itemizedDeductions = parseFloat(this.container.querySelector('#itemized-deductions').value) || 0;
             const retirementContributions = parseFloat(this.container.querySelector('#retirement-contributions').value) || 0;
             const educationCredits = parseFloat(this.container.querySelector('#education-credits').value) || 0;
-            
             // Calculate AGI and taxable income
             const agi = income - retirementContributions;
             const deduction = Math.max(standardDeduction, itemizedDeductions);
             const taxableIncome = Math.max(0, agi - deduction);
-            
             // Calculate federal tax
             let federalTax = 0;
             const brackets = this.getFederalTaxBrackets(filingStatus, taxYear);
             let remainingIncome = taxableIncome;
             const bracketDetails = [];
-            
             for (let i = 0; i < brackets.length; i++) {
                 const bracket = brackets[i];
                 const bracketMax = bracket.max || Infinity;
                 const bracketRange = Math.min(remainingIncome, bracketMax - (brackets[i-1]?.max || 0));
-                
                 if (bracketRange > 0) {
                     const bracketTax = bracketRange * (bracket.rate / 100);
                     federalTax += bracketTax;
@@ -231,10 +214,8 @@ class TaxCalculator {
                     remainingIncome -= bracketRange;
                 }
             }
-            
             // Apply education credits
             federalTax = Math.max(0, federalTax - educationCredits);
-            
             // Calculate FICA tax (2024 updates)
             const socialSecurityWageBase = taxYear >= 2024 ? 168600 : 160200;
             const socialSecurityTax = Math.min(income, socialSecurityWageBase) * 0.062;
@@ -247,15 +228,12 @@ class TaxCalculator {
                 additionalMedicareTax = (income - 250000) * 0.009;
             }
             const ficaTax = socialSecurityTax + medicareTax + additionalMedicareTax;
-            
             // Calculate state tax
             const stateTax = this.calculateStateTax(state, taxableIncome, income, filingStatus, taxYear);
-            
             // Calculate totals
             const totalTax = federalTax + stateTax + ficaTax;
             const effectiveRate = (totalTax / income) * 100;
             const afterTaxIncome = income - totalTax;
-            
             // Display results
             this.container.querySelector('#gross-income').textContent = `$${income.toLocaleString('en-US')}`;
             this.container.querySelector('#agi').textContent = `$${agi.toLocaleString('en-US')}`;
@@ -266,13 +244,10 @@ class TaxCalculator {
             this.container.querySelector('#total-tax').textContent = `$${totalTax.toLocaleString('en-US', {maximumFractionDigits: 0})}`;
             this.container.querySelector('#effective-rate').textContent = `${effectiveRate.toFixed(1)}%`;
             this.container.querySelector('#after-tax-income').textContent = `$${afterTaxIncome.toLocaleString('en-US', {maximumFractionDigits: 0})}`;
-            
             // Generate tax brackets table
             this.generateBracketsTable(bracketDetails);
-            
             // Generate chart
             this.generateChart(income, federalTax, stateTax, ficaTax);
-            
             // Show results
             this.container.querySelector('#tax-results').style.display = 'block';
         } catch (error) {
@@ -283,7 +258,6 @@ class TaxCalculator {
             calculateBtn.innerHTML = '<i class="fas fa-calculator"></i> Calculate Tax Liability';
         }
     }
-
     getFederalTaxBrackets(filingStatus, year) {
         if (year === 2024) {
             if (filingStatus === 'single') {
@@ -383,7 +357,6 @@ class TaxCalculator {
             }
         }
     }
-
     getStandardDeduction(filingStatus, year) {
         if (year === 2024) {
             if (filingStatus === 'single') return 14600;
@@ -400,12 +373,10 @@ class TaxCalculator {
         }
         return 0;
     }
-
     calculateStateTax(state, taxableIncome, grossIncome, filingStatus, year) {
         // States with no income tax
         const noTaxStates = ['ak', 'fl', 'nv', 'sd', 'tx', 'wa', 'wy', 'tn', 'nh'];
         if (noTaxStates.includes(state)) return 0;
-        
         // Flat rate states
         const flatRateStates = {
             'co': 0.044,    // Colorado
@@ -416,11 +387,9 @@ class TaxCalculator {
             'pa': 0.0307,    // Pennsylvania
             'ut': 0.0485     // Utah
         };
-        
         if (flatRateStates[state]) {
             return taxableIncome * flatRateStates[state];
         }
-        
         // Progressive tax states (simplified calculations)
         switch(state) {
             case 'ca': // California
@@ -441,7 +410,6 @@ class TaxCalculator {
                     // Head of household
                     return taxableIncome * 0.05;
                 }
-                
             case 'ny': // New York
                 if (filingStatus === 'single') {
                     if (taxableIncome <= 8500) return taxableIncome * 0.04;
@@ -458,19 +426,15 @@ class TaxCalculator {
                     // Simplified for other statuses
                     return taxableIncome * 0.05;
                 }
-                
             // Add more states as needed...
-                
             default:
                 // Default to a simplified calculation for other states
                 return taxableIncome * 0.05;
         }
     }
-
     generateBracketsTable(brackets) {
         const bracketsBody = this.container.querySelector('#brackets-body');
         bracketsBody.innerHTML = '';
-        
         brackets.forEach(bracket => {
             const row = document.createElement('tr');
             row.innerHTML = `
@@ -481,14 +445,11 @@ class TaxCalculator {
             bracketsBody.appendChild(row);
         });
     }
-
-    generateChart(income, federal, state, fica) {
+   generateChart(income, federal, state, fica) {
         const ctx = this.container.querySelector('#tax-chart').getContext('2d');
-        
         if (this.chart) {
             this.chart.destroy();
         }
-        
         this.chart = new Chart(ctx, {
             type: 'doughnut',
             data: {
@@ -524,17 +485,14 @@ class TaxCalculator {
             }
         });
     }
-
-    setupEventListeners() {
+   setupEventListeners() {
         this.container.querySelector('#calculate-tax').addEventListener('click', () => this.calculate());
-        
         // Update standard deduction when filing status or year changes
         this.container.querySelector('#tax-filing-status').addEventListener('change', () => {
             const filingStatus = this.container.querySelector('#tax-filing-status').value;
             const year = parseInt(this.container.querySelector('#tax-year').value) || 2024;
             this.container.querySelector('#standard-deduction').value = this.getStandardDeduction(filingStatus, year);
         });
-        
         this.container.querySelector('#tax-year').addEventListener('change', () => {
             const filingStatus = this.container.querySelector('#tax-filing-status').value;
             const year = parseInt(this.container.querySelector('#tax-year').value) || 2024;
@@ -542,7 +500,6 @@ class TaxCalculator {
         });
     }
 }
-
 // Export the class for use in other files
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = TaxCalculator;
