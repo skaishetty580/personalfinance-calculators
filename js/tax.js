@@ -500,9 +500,11 @@ class TaxCalculator {
         });
     }
 }
-// Export the class for use in other files
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = TaxCalculator;
-} else {
-    window.TaxCalculator = TaxCalculator;
-}
+
+// Initialize the calculator when the DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    const calculatorContainer = document.getElementById('tax-calculator');
+    if (calculatorContainer) {
+        new TaxCalculator(calculatorContainer);
+    }
+});
