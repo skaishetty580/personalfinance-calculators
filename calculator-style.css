@@ -96,47 +96,7 @@ body {
 }
 
 /* Calculator Section */
-.calculator-section {
-    padding: 60px 0;
-    background-color: white;
-}
 
-.calculator-header {
-    margin-bottom: 30px;
-}
-
-.button {
-    display: inline-flex;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: white;
-    color: var(--primary-color);
-    border: 1px solid var(--primary-color);
-    border-radius: var(--border-radius);
-    font-weight: 500;
-    cursor: pointer;
-    transition: var(--transition);
-    text-decoration: none;
-}
-
-.button i {
-    margin-right: 8px;
-}
-
-.button:hover {
-    background-color: var(--primary-color);
-    color: white;
-}
-
-/* Calculator Container */
-#mortgage-calculator {
-    width: 100%;
-    background-color: white;
-    border-radius: var(--border-radius);
-    box-shadow: var(--box-shadow);
-    padding: 30px;
-    margin: 0 auto;
-}
 
 /* Footer Styles */
 .main-footer {
