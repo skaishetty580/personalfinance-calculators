@@ -15,6 +15,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- End Google Tag Manager -->
 <link rel="canonical" href="https://smartfincalc.com/tax-calculator/">
 <link href="/style.css" rel="stylesheet"/>
+<link href="/calculator-style.css" rel="stylesheet"/>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script defer="" src="/main.js"></script>
@@ -49,25 +50,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <!-- End Google Tag Manager (noscript) -->
 <section class="hero">
-<div class="container" style="display: flex; align-items: center; justify-content: space-between; padding: 40px 0;">
+<div class="container" style="display: flex; align-items: center; justify-content: space-between;">
 <div class="hero-content">
 <h2>Tax Calculator</h2>
 <p class="subtitle">Estimate your income taxes with SmartFinCalc’s free tax calculator. Calculate federal and state taxes, deductions, credits, and your take-home pay.</p>
+<button class="button back-button" onclick="window.location.href='/'">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </button>
 </div>
 <div class="hero-image">
-<i class="fas fa-file-invoice-dollar" style="font-size: 120px; color: #4361ee; opacity: 0.9;"></i>
+<i class="fas fa-file-invoice-dollar"></i>
 </div>
 </div>
 </section>
-<div class="container">
-<div class="calculator-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
-<button class="button back-button" onclick="window.location.href='/'" style="margin-top: 10px;">
-<i class="fas fa-arrow-left"></i> Back to Home
-        </button>
-</div>
 <div id="tax-calculator" style="width: 250%; max-width: 1160px;"></div>
-</div>
-</div>
 <footer class="main-footer">
 <div class="container">
 <div class="footer-container">
